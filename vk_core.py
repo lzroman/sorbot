@@ -6,6 +6,7 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 import time, random, requests
 from PIL import Image
+import json
 
 class vk_core:
     def __init__(self, token):
@@ -83,10 +84,11 @@ class vk_core:
         print(wall['count'])
         for post in wall['items']:
             post['post_id'] = post['id']
-            if len(post['attachments']) > 0:
+            if 'attachments' in post.keys():
+            #if len(post['attachments']) > 0:
                 newattachments = ''
                 for attachment in post['attachments']:
-                    if attachment['type'] != 'photo':
+                    if attachment['type'] != 'photo' and 'owner_id' in attachment.keys():
                         newattachments += ',' + attachment['type'] + str(attachment[attachment['type']]['owner_id']) + '_' + str(attachment[attachment['type']]['id'])
                     else:
                         z = 0
@@ -120,6 +122,10 @@ class vk_core:
                         upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
                         newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
                 post['attachments'] = newattachments
+                if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
+                    poll = self.vk_session.method('polls.create',{'question' : 'Карательность блюда', 'is_anonymous' : 1, 'add_answers' : json.dumps(['1','2','3','4','5'])})
+                    #print(poll)
+                    newattachments += ',poll' + str(poll['owner_id']) + '_' + str(poll['id'])
                 newpost = dict()
                 newpost['attachments'] = newattachments[1:]
                 newpost['owner_id'] = -public_id
@@ -127,7 +133,7 @@ class vk_core:
                 newpost['post_id'] = post['id']
                 newpost['publish_date'] = int(time.time() + 2000000)
                 newpost['signed'] = 1
-            self.vk_session.method('wall.post', newpost)
+                self.vk_session.method('wall.post', newpost)
 
 
 

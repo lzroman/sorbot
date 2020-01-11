@@ -8,7 +8,7 @@ import time, random
 from threading import Thread
 import datetime
 
-import discord
+#import discord
 
 
 
@@ -253,6 +253,7 @@ bot.actions_add(bot.pomyanem)
 vkthread = Thread(target=bot.start, daemon=True)
 vkthread.start()
 
+'''
 discordbot = discord.Client()
 
 @discordbot.event
@@ -277,3 +278,4 @@ async def on_ready():
         )
 
 discordbot.run('NjU1MDMzMjQwMzg1NDg2ODU4.XfONfA.mIhUQ1mTgzKLtJZ0yEYdJyqWyl8')
+'''
