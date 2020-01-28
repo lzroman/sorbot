@@ -262,7 +262,7 @@ bot.actions_add(bot.jirniy)
 bot.actions_add(bot.ban_new_user)
 bot.actions_add(bot.pomyanem)
 bot.actions_add(bot.durka)
-vkthread = Thread(target=bot.start, daemon=True)
+vkthread = Thread(target=bot.start)
 vkthread.start()
 
 '''
