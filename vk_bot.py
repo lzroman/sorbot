@@ -19,7 +19,7 @@ class karbot:
 
         self.actions = []
         self.threads = []
-        self.alphabet = [['s','S','с','С','$','ς','c','С','C','Ç','ᴄ','Ⓒ','匚','ᶜ','仁','⊂','☪','¢','《','[','Ĉ','{','Č','Ç','ℂ'],['০','o','O','о','О','0','ο','o','О','o','Ω','о́','ø','∅','ᴏ','Ⓞ','口','ᵒ','О','○','°','●','ø','[','Ø','ö'],['p','P','r','R','р','Р','ρ','p','Р','p','₽','ק','ř','р','尸','卩','ℙ','®','₱','ℙ'],['b','B','б','Б','β','б','Б','b','ß','b','б','6','δ','右','Ҕ','ь','Ϭ'],['e','E','е','E','ε','е','Е','e','ę','э','Э','є','Є','ᴇ','Ѣ','ъ','Ъ','Ⓔ','е́','巳','ᵉ','℮','€','£','Ē','ė','℮'],['t','T','т','Т','τ','т','Т','t','ŧ','т','7','丅','丁','Т','⚚']]
+        self.alphabet = [['s','S','с','С','$','ς','c','С','C','Ç','ᴄ','Ⓒ','匚','ᶜ','仁','⊂','☪','¢','《','[','Ĉ','{','Č','Ç','ℂ'],['০','o','O','о','О','0','ο','o','О','o','Ω','о́','ø','∅','ᴏ','Ⓞ','口','ᵒ','О','○','°','●','ø','[','Ø','ö'],['p','P','r','R','р','Р','ρ','p','Р','p','₽','ק','ř','р','尸','卩','ℙ','®','₱','ℙ'],['b','B','б','Б','β','б','Б','b','ß','b','б','6','δ','右','Ҕ','Ϭ'],['e','E','е','E','ε','е','Е','e','ę','э','Э','є','Є','ᴇ','Ѣ','ъ','Ъ','Ⓔ','е́','巳','ᵉ','℮','€','£','Ē','ė','℮'],['t','T','т','Т','τ','т','Т','t','ŧ','т','7','丅','丁','Т','⚚']]
         self.chat_id = 5
         self.word = 'sorbet'
         self.word_len = len(self.word)
@@ -85,11 +85,22 @@ class karbot:
         for event in self.core.events_message_chat(self.chat_id):
             if event.user_id != 379124050:
                 if event.text.find('жирн') != -1 or event.text.find('Жирн') != -1:
-                    time.sleep(2)
-                    upload = self.core.upload.photo_messages('jir.jpg')[0]                    
-                    time.sleep(1)
-                    self.core.vk.messages.send(message='Кто жирный?', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
+                    if len(event.text) > 15:
+                        time.sleep(2)
+                        upload = self.core.upload.photo_messages('jir.jpg')[0]                    
+                        time.sleep(1)
+                        self.core.vk.messages.send(message='Я здесь жирный!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                        time.sleep(600)
+    def durka(self):
+        for event in self.core.events_message_chat(self.chat_id):
+            if event.user_id != 379124050:
+                if event.text.find('дурк') != -1 or event.text.find('Дурк') != -1:
+                    if len(event.text) > 15:
+                        time.sleep(2)
+                        upload = self.core.upload.photo_messages('d' + str(random.randint(1, 4)) + '.jpg')[0]                    
+                        time.sleep(1)
+                        self.core.vk.messages.send(message='Ты как блять за окно выбрался?', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                        time.sleep(600)
 
     def karul(self):
         while True:
@@ -250,6 +261,7 @@ bot.actions_add(bot.karul)
 bot.actions_add(bot.jirniy)
 bot.actions_add(bot.ban_new_user)
 bot.actions_add(bot.pomyanem)
+bot.actions_add(bot.durka)
 vkthread = Thread(target=bot.start, daemon=True)
 vkthread.start()
 
