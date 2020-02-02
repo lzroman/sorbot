@@ -112,6 +112,16 @@ class karbot:
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                     time.sleep(600)
 
+    def dapizda(self):
+        for event in self.core.events_message_chat(self.chat_id):
+            if event.user_id != 379124050:
+                if event.text == "Да" or event.text == "да":
+                    time.sleep(2)
+                    upload = self.core.upload.photo_messages('da.jpg')[0]                    
+                    time.sleep(1)
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                    time.sleep(600)
+
     def karul(self):
         while True:
             class rul_watch:
@@ -273,6 +283,7 @@ bot.actions_add(bot.ban_new_user)
 bot.actions_add(bot.pomyanem)
 bot.actions_add(bot.durka)
 bot.actions_add(bot.okurok)
+bot.actions_add(bot.dapizda)
 vkthread = Thread(target=bot.start)
 vkthread.start()
 
