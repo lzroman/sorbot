@@ -48,6 +48,13 @@ class vk_core:
             for event in self.listening():
                 yield event
     
+    def getevents(self):
+        while True:
+            try: 
+                return self.longpoll.check()
+            except Exception as e:
+                print('error', e)
+
     def events_message(self):
         while True:
             for event in self.listening():
