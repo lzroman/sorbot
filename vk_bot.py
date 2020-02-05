@@ -20,7 +20,7 @@ class karbot:
         self.actions = []
         self.threads = []
         self.alphabet = [['s','S','с','С','$','ς','c','С','C','Ç','ᴄ','Ⓒ','匚','ᶜ','仁','⊂','☪','¢','《','[','Ĉ','{','Č','Ç','ℂ'],['০','o','O','о','О','0','ο','o','О','o','Ω','о́','ø','∅','ᴏ','Ⓞ','口','ᵒ','О','○','°','●','ø','[','Ø','ö'],['p','P','r','R','р','Р','ρ','p','Р','p','₽','ק','ř','р','尸','卩','ℙ','®','₱','ℙ'],['b','B','б','Б','β','б','Б','b','ß','b','б','6','δ','右','Ҕ','Ϭ'],['e','E','е','E','ε','е','Е','e','ę','э','Э','є','Є','ᴇ','Ѣ','ъ','Ъ','Ⓔ','е́','巳','ᵉ','℮','€','£','Ē','ė','℮'],['t','T','т','Т','τ','т','Т','t','ŧ','т','7','丅','丁','Т','⚚']]
-        self.chat_id = 6
+        self.chat_id = 5
         self.word = 'sorbet'
         self.word_len = len(self.word)
         self.word_prepare()
@@ -82,7 +82,7 @@ class karbot:
                         self.newfags.pop(ind)
                         self.newfags_time.pop(ind)
                         self.newfags_state.pop(ind)
-                        self.core.send_message('Теперь вы - полноценный гражданин гвардии @smayanezikom (Карательной кулинарии), поздравляем!',chat_id=self.chat_id,forward_messages=event.message_id)
+                        self.core.send_message('Теперь вы - полноценный гвардеец @smayanezikom (Карательной кулинарии), поздравляем!',chat_id=self.chat_id,forward_messages=event.message_id)
         curtime = int(time.time())
         for ind in range(len(self.newfags)):
             if self.newfags_state[ind] == 1:
