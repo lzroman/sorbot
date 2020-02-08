@@ -33,10 +33,10 @@ class sorbot:
         #189945062 - test
         #137996395 - kk
         group_id = 137996395
-        self.core.get_news_suggested(group_id, 'wm_kk.png')
+        self.core.get_news_suggested(group_id, 'imgs\\wm_kk.png')
         while True:
             time.sleep(10000)
-            self.core.get_news_suggested(group_id, 'wm_kk.png')
+            self.core.get_news_suggested(group_id, 'imgs\\wm_kk.png')
 
     def get_admins(self):
         self.admin_list.clear()
@@ -127,7 +127,7 @@ class jirniy:
             if event.text.find('жирн') != -1 or event.text.find('Жирн') != -1:
                 if len(event.text) > 15:
                     if self.cooldown('jir'):
-                        upload = self.core.upload.photo_messages('jir.jpg')[0]                    
+                        upload = self.core.upload.photo_messages('imgs\\jir.jpg')[0]                    
                         time.sleep(1)
                         self.core.vk.messages.send(message='Я здесь жирный!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
     
@@ -136,7 +136,7 @@ class jirniy:
             if event.text.find('дурк') != -1 or event.text.find('Дурк') != -1:
                 if len(event.text) > 15:
                     if self.cooldown('durka'):
-                        upload = self.core.upload.photo_messages('d' + str(random.randint(1, 4)) + '.jpg')[0]                       
+                        upload = self.core.upload.photo_messages('imgs\\d' + str(random.randint(1, 4)) + '.jpg')[0]                       
                         time.sleep(1)
                         self.core.vk.messages.send(message='Ты как блять за окно выбрался?', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
@@ -144,7 +144,7 @@ class jirniy:
         if self.is_chat(event):
             if event.text.find('2 рубл') != -1 or event.text.find('Окурок') != -1 or event.text.find('окурок') != -1 or event.text.find('Окурк') != -1 or event.text.find('окурк') != -1:
                 if self.cooldown('okurok'):
-                    upload = self.core.upload.photo_messages('okurok.jpg')[0]                    
+                    upload = self.core.upload.photo_messages('imgs\\okurok.jpg')[0]                    
                     time.sleep(1)
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                         
@@ -152,7 +152,7 @@ class jirniy:
         if self.is_chat(event):
             if event.text == "Да" or event.text == "да":
                 if self.cooldown('jir'):
-                    upload = self.core.upload.photo_messages('da.jpg')[0]                    
+                    upload = self.core.upload.photo_messages('imgs\\da.jpg')[0]                    
                     time.sleep(1)
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 

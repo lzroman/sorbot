@@ -18,7 +18,7 @@ class sorbot_core:
         self.tools = vk_api.VkTools(self.vk_session)
         self.upload = vk_api.VkUpload(self.vk_session)
         self.wm_size = 0.2
-        
+
     def send_message(self, text, chat_id = -1, user_id = 0, forward_messages = -1, attachment = [], delay = 5):
         time.sleep(random.random() * delay)
         if chat_id != -1:
@@ -69,8 +69,8 @@ class sorbot_core:
                             if 'w' == size['type']:
                                 getsize = size
                                 break
-                        open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
-                        im = Image.open('tempfile.jpg')
+                        open('imgs\\tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
+                        im = Image.open('imgs\\tempfile.jpg')
                         width, height = im.size
                         if width > height:
                             newwidth = int(width * self.wm_size)
@@ -82,8 +82,8 @@ class sorbot_core:
                         xpos = random.randrange(width - newwidth)
                         ypos = random.randrange(height - newheight)
                         im.paste(tempwm, (xpos, ypos), tempwm)
-                        im.save('newtempfile.jpg')
-                        upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
+                        im.save('imgs\\newtempfile.jpg')
+                        upload = self.upload.photo_wall('imgs\\newtempfile.jpg', group_id = public_id)
                         newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
                 post['attachments'] = newattachments
                 if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
