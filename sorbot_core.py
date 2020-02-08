@@ -8,7 +8,7 @@ import time, random, requests
 from PIL import Image
 import json
 
-class vk_core:
+class sorbot_core:
     def __init__(self, token):
         self._app_id = "2685278"
         self._vk_client_secret = "hHbJug59sKJie78wjrH8"
@@ -18,15 +18,7 @@ class vk_core:
         self.tools = vk_api.VkTools(self.vk_session)
         self.upload = vk_api.VkUpload(self.vk_session)
         self.wm_size = 0.2
-
-    def listening(self):
-        while True:
-            try: 
-                for event in self.longpoll.check():
-                    yield event
-            except Exception as e:
-                print('error', e)
-
+        
     def send_message(self, text, chat_id = -1, user_id = 0, forward_messages = -1, attachment = [], delay = 5):
         time.sleep(random.random() * delay)
         if chat_id != -1:
@@ -43,47 +35,12 @@ class vk_core:
     def remove_user(self, chat_id, user_id):
         self.vk_session.method('messages.removeChatUser',{'chat_id' : chat_id, 'user_id' : user_id})
 
-    def events(self):
-        while True:
-            for event in self.listening():
-                yield event
-    
     def getevents(self):
         while True:
             try: 
                 return self.longpoll.check()
             except Exception as e:
                 print('error', e)
-
-    def events_message(self):
-        while True:
-            for event in self.listening():
-                if event.type == VkEventType.MESSAGE_NEW:
-                    yield event
-    
-    def events_message_chat(self, chat_id = -1):
-        if chat_id != -1:
-            while True:
-                for event in self.listening():
-                    if event.type == VkEventType.MESSAGE_NEW and event.from_chat and event.chat_id == chat_id:
-                        yield event
-        else:
-            while True:
-                for event in self.listening():
-                    if event.type == VkEventType.MESSAGE_NEW and event.from_chat:
-                        yield event
-    
-    def events_message_user(self, user_id = -1):
-        if user_id != -1:
-             while True:
-                for event in self.listening():
-                    if event.type == VkEventType.MESSAGE_NEW and event.from_user and event.user_id == user_id:
-                        yield event
-        else:
-             while True:
-                for event in self.listening():
-                    if event.type == VkEventType.MESSAGE_NEW and event.from_user:
-                        yield event
 
     def get_news_suggested(self, public_id, path):
         wm = Image.open(path)
