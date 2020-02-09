@@ -338,6 +338,7 @@ class ban_new_user:
         self.newfags = []
         self.newfags_time = []
         self.newfags_state = []
+        self.isrun = False
 
     def actions(self):
         return [self.ban_new_user]
@@ -588,7 +589,7 @@ with open('config.json', 'r') as f:
 bot = sorbot(conf['token'], conf['chat_id'], conf['botname'], conf['admin_ids'])
 bot.plugins_add(jirniy)
 bot.plugins_add(pomyanem)
-bot.plugins_add(ban_new_user)
+#bot.plugins_add(ban_new_user)
 bot.plugins_add(ruletka)
 bot.plugins_add(sorbetoban)
 bot.plugins_add(achievements_list)
