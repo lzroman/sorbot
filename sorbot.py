@@ -26,17 +26,13 @@ class sorbot:
         self.admin_list = []
         self.get_admins()
         self.gparms = {'chat_id': self.chat_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}}
-        with open('achievements.json', 'r') as f:
-            self.gparms['achievements'] = json.load(f)
-        with open('stats.json', 'r') as f:
-            self.gparms['stats'] = json.load(f)
         self.gparms['is_ach_on_user'] = self.is_ach_on_user
         self.gparms['achieve'] = self.achieve
         self.gparms['is_stat_on_user'] = self.is_stat_on_user
         self.predlojka = Thread(target=self.check_suggestions)
-        self.predlojka.start()
+        #self.predlojka.start()
         self.saving_ach_thread = Thread(target=self.saving_ach)
-        self.saving_ach_thread.start()
+        #self.saving_ach_thread.start()
         self.achieve_thread_onject = Thread()
 
 
@@ -95,6 +91,27 @@ class sorbot:
                 self.gparms['stats_original'][stat] = newstat[stat].copy()
             for action in plugin.actions():
                 self.actions.append(action)
+
+        with open('achievements.json', 'r') as f:
+            ach_file = json.load(f)
+            for user in ach_file:
+                self.gparms['achievements'][user] = {}
+                for ach in ach_file[user]:
+                    self.gparms['achievements'][user][ach] = {}
+                    for par in ach_file[user][ach]:
+                        self.gparms['achievements'][user][ach] = ach_file[user][ach].copy()
+
+        with open('stats.json', 'r') as f:
+            stats_file = json.load(f)
+            for user in stats_file:
+                self.gparms['stats'][user] = {}
+                for stat in stats_file[user]:
+                    self.gparms['stats'][user][stat] = {}
+                    for par in stats_file[user][stat]:
+                        self.gparms['stats'][user][stat] = stats_file[user][stat].copy()
+        print(self.gparms['achievements'])
+        print(self.gparms['stats'])
+
         self.gparms['ach_len'] = len(self.gparms['achievements_original'])
         while True:
             events = self.core.getevents()
@@ -460,34 +477,41 @@ class sorbetoban:
         return {'sorbetoban':{'text':'Банов за сорбет','params':{'value':0}}}
 
     def word_watcher(self, event):
-        if event.type == VkEventType.MESSAGE_NEW and event.from_chat and event.chat_id == self.gparms['chat_id']:
-            if self.word_check(event.text):
-                if event.user_id != 379124050:
-                    uname = str(event.user_id)
-                    self.gparms['is_ach_on_user']('5_bans',uname)
-                    self.gparms['achievements'][uname]['first_ban']['count'] += 1
-                    if self.gparms['achievements'][uname]['first_ban']['count'] == 1:
-                        self.gparms['achieve']('first_ban',uname)
-                    elif self.gparms['achievements'][uname]['first_ban']['count'] == 5:
-                        self.gparms['achieve']('5_bans',uname)
-                    self.gparms['is_stat_on_user']('sorbetoban',uname)
-                    self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
-                    if event.user_id in self.gparms['chat_admins']:
-                        if event.user_id == self.gparms['chat_admins'][0]:
-                            self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                        else:
-                            self.core.send_message('Всегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                    elif event.user_id == 373593096:
-                        self.core.send_message('Андрюша, а тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                    else:
-                        self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                    '''
-                    else:
-                        if event.user_id in [277183894,174005550]:
-                            self.core.send_message('Благодарим за помощь в становлении сорбетной гвардии!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                        else:
-                            self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                    '''
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    if self.word_check(event.text):
+                        if event.user_id != 379124050:
+                            uname = str(event.user_id)
+                            print('ass0')
+                            self.gparms['is_ach_on_user']('first_ban',uname)
+                            self.gparms['is_ach_on_user']('5_bans',uname)
+                            self.gparms['achievements'][uname]['first_ban']['count'] += 1
+                            print('ass1')
+                            if self.gparms['achievements'][uname]['first_ban']['count'] == 1:
+                                self.gparms['achieve']('first_ban',uname)
+                            elif self.gparms['achievements'][uname]['first_ban']['count'] == 5:
+                                self.gparms['achieve']('5_bans',uname)
+                            print('ass2')
+                            self.gparms['is_stat_on_user']('sorbetoban',uname)
+                            self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
+                            print('ass3')
+                            if event.user_id in self.gparms['chat_admins']:
+                                if event.user_id == self.gparms['chat_admins'][0]:
+                                    self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                else:
+                                    self.core.send_message('Всегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            elif event.user_id == 373593096:
+                                self.core.send_message('Андрюша, а тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            else:
+                                self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            '''
+                            else:
+                                if event.user_id in [277183894,174005550]:
+                                    self.core.send_message('Благодарим за помощь в становлении сорбетной гвардии!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                else:
+                                    self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            '''
 
     def word_prepare(self):
         self.word_letters = []
