@@ -69,8 +69,8 @@ class sorbot_core:
                             if 'w' == size['type']:
                                 getsize = size
                                 break
-                        open('imgs\\tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
-                        im = Image.open('imgs\\tempfile.jpg')
+                        open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
+                        im = Image.open('tempfile.jpg')
                         width, height = im.size
                         if width > height:
                             newwidth = int(width * self.wm_size)
@@ -82,8 +82,8 @@ class sorbot_core:
                         xpos = random.randrange(width - newwidth)
                         ypos = random.randrange(height - newheight)
                         im.paste(tempwm, (xpos, ypos), tempwm)
-                        im.save('imgs\\newtempfile.jpg')
-                        upload = self.upload.photo_wall('imgs\\newtempfile.jpg', group_id = public_id)
+                        im.save('newtempfile.jpg')
+                        upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
                         newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
                 post['attachments'] = newattachments
                 if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
