@@ -189,6 +189,54 @@ class template:
     def stats(self):
         return {'stat':{'text':'','params':{'value':0}}}
 
+
+
+
+
+
+
+
+
+
+
+
+class stickers:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+
+    def achievements(self):
+        return {'klubn':{'text':'Вы в клубничках!','img':'ach_klub.jpg','desc':'Отправить стикер с клубничкой','params':{'state':False}},'spraveb':{'text':'Справебыдло!','desc':'Отправить стикер с орехом','params':{'state':False}}}
+
+    def actions(self):
+        return [self.stickers]
+    
+    def stickers(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    uname = str(event.user_id)
+                    if 'attach1_type' in event.raw[-2].keys():
+                        if event.raw[-2]['attach1_type'] == 'sticker':
+                            if event.raw[-2]['attach1'] == '145':
+                                print('a')
+                                self.gparms['is_ach_on_user']('klubn',uname)
+                                self.gparms['achieve']('klubn',uname)
+                                self.gparms['is_stat_on_user']('klubn_count',uname)
+                                self.gparms['stats'][uname]['klubn_count']['value'] += 1
+                            if event.raw[-2]['attach1'] == '163':
+                                self.gparms['is_ach_on_user']('spraveb',uname)
+                                self.gparms['achieve']('spraveb',uname)
+                                self.gparms['is_stat_on_user']('spraveb_count',uname)
+                                self.gparms['stats'][uname]['spraveb_count']['value'] += 1
+
+                    print(event.raw[-2])
+
+    def stats(self):
+        return {'klubn_count':{'text':'Количество отправленных клубничек','params':{'value':0}},'spraveb_count':{'text':'Количество отправленных орехов','params':{'value':0}}}
+
+
+
 class achievements_list:
     def __init__(self, core, gparms):
         self.core = core
@@ -484,19 +532,15 @@ class sorbetoban:
                     if self.word_check(event.text):
                         if event.user_id != 379124050:
                             uname = str(event.user_id)
-                            print('ass0')
                             self.gparms['is_ach_on_user']('first_ban',uname)
                             self.gparms['is_ach_on_user']('5_bans',uname)
                             self.gparms['achievements'][uname]['first_ban']['count'] += 1
-                            print('ass1')
                             if self.gparms['achievements'][uname]['first_ban']['count'] == 1:
                                 self.gparms['achieve']('first_ban',uname)
                             elif self.gparms['achievements'][uname]['first_ban']['count'] == 5:
                                 self.gparms['achieve']('5_bans',uname)
-                            print('ass2')
                             self.gparms['is_stat_on_user']('sorbetoban',uname)
                             self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
-                            print('ass3')
                             if event.user_id in self.gparms['chat_admins']:
                                 if event.user_id == self.gparms['chat_admins'][0]:
                                     self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
@@ -593,4 +637,5 @@ bot.plugins_add(pomyanem)
 bot.plugins_add(ruletka)
 bot.plugins_add(sorbetoban)
 bot.plugins_add(achievements_list)
+bot.plugins_add(stickers)
 bot.start()
