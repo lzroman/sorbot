@@ -30,9 +30,9 @@ class sorbot:
         self.gparms['achieve'] = self.achieve
         self.gparms['is_stat_on_user'] = self.is_stat_on_user
         self.predlojka = Thread(target=self.check_suggestions)
-        #self.predlojka.start()
+        self.predlojka.start()
         self.saving_ach_thread = Thread(target=self.saving_ach)
-        #self.saving_ach_thread.start()
+        self.saving_ach_thread.start()
         self.achieve_thread_onject = Thread()
 
 
@@ -373,9 +373,11 @@ class pomyanem:
     
     def pomyanem(self, event):
         if event.type_id == 8 and event.chat_id == self.gparms['chat_id']:
-            self.core.send_message('Помянем.',chat_id=self.gparms['chat_id'])
+            upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
+            self.core.vk.messages.send(message='Помянем.', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
         if event.type_id == 7 and event.chat_id == self.gparms['chat_id']:
-            self.core.send_message('Помянем.',chat_id=self.gparms['chat_id'])
+            upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
+            self.core.vk.messages.send(message='Помянем.', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
 
 
