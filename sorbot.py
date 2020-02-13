@@ -443,7 +443,7 @@ class ruletka:
         return [self.shoot, self.ruletka]
 
     def achievements(self):
-        return {'first_ruletka':{'text':'Кто не рискует, тот не пидор','desc':'Первая игра в карательную рулетку','params':{'state':False,'count':0}},'first_ruletka_pidor':{'text':'Один раз не пидорас','desc':'Первая победа в карательной рулетке','params':{'state':False,'count':0}},'first_ruletka_call':{'text':'Спорим на пидора?','desc':'Первый вызов карательной рулетки','params':{'state':False,'count':0}}}
+        return {'first_ruletka':{'text':'Кто не рискует, тот не пидор','desc':'Первая игра в карательную рулетку','params':{'state':False,'count':0}},'first_ruletka_pidor':{'text':'Один раз не пидорас','desc':'Первая победа в карательной рулетке','params':{'state':False,'count':0}},'first_ruletka_call':{'text':'Спорим на пидора?','desc':'Первый вызов карательной рулетки','params':{'state':False,'count':0}},'odin_strel':{'text':'Одинокий стрелок','desc':'Не хватило игроков для запуска рулетки','params':{'state':False,'count':0}}}
 
     def stats(self):
         return {'ruletka_shoot':{'text':'Попыток игры в рулетку','params':{'value':0}},'ruletka_win':{'text':'Побед в рулетке','params':{'value':0}},'ruletka_start':{'text':'Запусков рулетки','params':{'value':0}}}
@@ -505,6 +505,8 @@ class ruletka:
                                 self.gparms['stats'][uname]['ruletka_win']['value'] = self.gparms['achievements'][uname]['first_ruletka_pidor']['count']
                             else:                        
                                 self.core.send_message('Недостаточно игроков!',chat_id=self.gparms['chat_id'])
+                                self.gparms['is_ach_on_user']('odin_strel',uname)
+                                self.gparms['achieve']('odin_strel',uname)
                             self.ruletka_is = False
                             self.ruletka_list.clear()
 
