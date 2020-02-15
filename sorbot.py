@@ -374,10 +374,10 @@ class pomyanem:
     def pomyanem(self, event):
         if event.type_id == 8 and event.chat_id == self.gparms['chat_id']:
             upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
-            self.core.vk.messages.send(message='Помянем.', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+            self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
         if event.type_id == 7 and event.chat_id == self.gparms['chat_id']:
             upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
-            self.core.vk.messages.send(message='Помянем.', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+            self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
 
 
