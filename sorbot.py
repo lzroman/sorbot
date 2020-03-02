@@ -298,7 +298,7 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet]
         
     def stats(self):
         return {}
@@ -354,17 +354,8 @@ class jirniy:
                     upload = self.core.upload.photo_messages('da.jpg')[0]
                     time.sleep(1)
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-                        
+                                             
     def privet(self, event):
-        if self.is_chat(event):
-            if event.text.lower() == "да":
-                if self.cooldown('dapizda'):
-                    upload = self.core.upload.photo_messages('da.jpg')[0]
-                    time.sleep(1)
-                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-                        
-    def poka(self, event):
         if self.is_chat(event):
             if event.text.lower().find('всем привет') != -1:
                 upload = self.core.upload.photo_messages('privet.jpg')[0]
