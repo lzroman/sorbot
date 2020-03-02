@@ -358,7 +358,7 @@ class jirniy:
     def privet(self, event):
         if self.is_chat(event):
             if event.text.lower().find('всем привет') != -1:
-                upload = self.core.upload.photo_messages('privet.jpg')[0]
+                upload = self.core.upload.photo_messages('priv.jpg')[0]
                 time.sleep(1)
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
             if event.text.lower().find('всем пока') != -1:
