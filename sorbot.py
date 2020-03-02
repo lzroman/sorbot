@@ -354,6 +354,28 @@ class jirniy:
                     upload = self.core.upload.photo_messages('da.jpg')[0]
                     time.sleep(1)
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                        
+    def privet(self, event):
+        if self.is_chat(event):
+            if event.text.lower() == "да":
+                if self.cooldown('dapizda'):
+                    upload = self.core.upload.photo_messages('da.jpg')[0]
+                    time.sleep(1)
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+                        
+    def poka(self, event):
+        if self.is_chat(event):
+            if event.text.lower().find('всем привет') != -1:
+                upload = self.core.upload.photo_messages('privet.jpg')[0]
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+            if event.text.lower().find('всем пока') != -1:
+                upload = self.core.upload.photo_messages('poka.jpg')[0]
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+
 
 
 
@@ -592,7 +614,7 @@ class sorbetoban:
                         letters_numb[letter_i] = curr
             if letters_numb[letter_i] == text_len:
                 return False
-        if letters_numb[-1] - letters_numb[0] < self.word_len * 3:
+        if letters_numb[-1] - letters_numb[0] < self.word_len * 2:
             return True
         else:
             return False
