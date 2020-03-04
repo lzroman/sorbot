@@ -392,6 +392,30 @@ class pomyanem:
             upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
             self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
+class when_join:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+
+    def actions(self):
+        return [self.when_join]
+        
+    def achievements(self):
+        return {}
+
+    def stats(self):
+        return {}
+    
+    def when_join(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.user_id != 379124050:
+                    if event.chat_id == self.gparms['chat_id']:
+                        if event.text.lower() == "карбот вступление":
+                            vals = self.core.vk_session.method('messages.getConversationMembers', {'peer_id': self.gparms['chat_id'] + 2000000000})
+                            val = next(item for item in vals['items'] if item['member_id'] == event.user_id)
+                            date = datetime.datetime.fromtimestamp(val['join_date'])
+                            self.core.send_message('Вы вступили в беседу ' + date.strftime('%Y-%m-%d %H:%M:%S'),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
 
 
 class ban_new_user:
@@ -655,4 +679,5 @@ bot.plugins_add(ruletka)
 bot.plugins_add(sorbetoban)
 bot.plugins_add(achievements_list)
 bot.plugins_add(stickers)
+bot.plugins_add(when_join)
 bot.start()
