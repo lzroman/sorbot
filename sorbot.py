@@ -456,7 +456,7 @@ class quotes:
                                     words.remove(word)
                                     if len(word) > 5:
                                         word = word[0:-3]
-                                    quote = [q for q in self.quotes if q.find(word) != -1]
+                                    quote = [q for q in self.quotes if q.lower().find(word) != -1]
                                     if len(quote):
                                         is_found = True
                                         quote = random.choice(quote)
