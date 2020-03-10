@@ -417,6 +417,61 @@ class when_join:
                             date = datetime.datetime.fromtimestamp(val['join_date'])
                             self.core.send_message('Вы вступили в беседу ' + date.strftime('%Y-%m-%d %H:%M:%S'),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
 
+class quotes:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+        self.f = open('quotes.txt', 'r')
+        self.quotes = self.f.readlines()
+        self.times = []
+        self.trigtime = 0
+
+    def actions(self):
+        return [self.quoting]
+        
+    def achievements(self):
+        return {}
+
+    def stats(self):
+        return {}
+
+    def quoting(self, event):
+        print('вуф')
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.user_id != 379124050:
+                    if event.chat_id == self.gparms['chat_id']:
+                        if len(event.text) > 0:
+                            curtime = int(time.time())
+                            for i_time in self.times:
+                                if i_time + 10 < curtime:
+                                    self.times.remove(i_time)
+                            self.times.append(curtime)
+                            print(self.times)
+                            words = event.text.lower().split()
+                            is_called = False
+                            print(words)
+                            if words[0] == 'карбот' and words[1] == 'цитата':
+                                word = words[2:]
+                                is_called = True
+                            if (len(self.times) > 50 and curtime > self.trigtime + 120) or is_called:
+                                random.shuffle(self.quotes)
+                                is_found = False
+                                while len(words):
+                                    word = random.choice(words)
+                                    words.remove(word)
+                                    if len(word) > 5:
+                                        word = word[0:-3]
+                                    quote = [q for q in self.quotes if q.find(word) != -1]
+                                    if len(quote):
+                                        is_found = True
+                                        quote = random.choice(quote)
+                                        break
+                                if not is_found:
+                                    quote = random.choice(self.quotes)
+                                self.core.send_message(quote,chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                self.trigtime = curtime
+
 
 class ban_new_user:
     def __init__(self, core, gparms):
@@ -528,6 +583,7 @@ class ruletka:
                             time.sleep(5)
                             self.core.send_message('5',chat_id=self.gparms['chat_id'], delay = 0)
                             time.sleep(5)
+                            self.ruletka_is = False
                             self.core.send_message('И победителем становится…',chat_id=self.gparms['chat_id'], delay = 0)
                             if len(self.ruletka_list) > 1:
                                 uid = random.choice(self.ruletka_list)
@@ -544,7 +600,6 @@ class ruletka:
                                 self.core.send_message('Недостаточно игроков!',chat_id=self.gparms['chat_id'])
                                 self.gparms['is_ach_on_user']('odin_strel',uname)
                                 self.gparms['achieve']('odin_strel',uname)
-                            self.ruletka_is = False
                             self.ruletka_list.clear()
 
 
@@ -680,4 +735,5 @@ bot.plugins_add(sorbetoban)
 bot.plugins_add(achievements_list)
 bot.plugins_add(stickers)
 bot.plugins_add(when_join)
+bot.plugins_add(quotes)
 bot.start()
