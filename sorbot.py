@@ -446,7 +446,7 @@ class quotes:
                             words = event.text.lower().split()
                             is_called = False
                             if words[0] == 'карбот' and words[1] == 'цитата':
-                                word = words[2:]
+                                words = words[2:]
                                 is_called = True
                             if (len(self.times) > 50 and curtime > self.trigtime + 120) or is_called:
                                 random.shuffle(self.quotes)
