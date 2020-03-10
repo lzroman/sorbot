@@ -440,7 +440,7 @@ class quotes:
                         if len(event.text) > 0:
                             curtime = int(time.time())
                             for i_time in self.times:
-                                if i_time + 10 < curtime:
+                                if i_time + 300 < curtime:
                                     self.times.remove(i_time)
                             self.times.append(curtime)
                             words = event.text.lower().split()
