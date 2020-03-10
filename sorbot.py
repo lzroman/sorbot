@@ -219,7 +219,6 @@ class stickers:
                     if 'attach1_type' in event.raw[-2].keys():
                         if event.raw[-2]['attach1_type'] == 'sticker':
                             if event.raw[-2]['attach1'] == '145':
-                                print('a')
                                 self.gparms['is_ach_on_user']('klubn',uname)
                                 self.gparms['achieve']('klubn',uname)
                                 self.gparms['is_stat_on_user']('klubn_count',uname)
@@ -229,8 +228,6 @@ class stickers:
                                 self.gparms['achieve']('spraveb',uname)
                                 self.gparms['is_stat_on_user']('spraveb_count',uname)
                                 self.gparms['stats'][uname]['spraveb_count']['value'] += 1
-
-                    print(event.raw[-2])
 
     def stats(self):
         return {'klubn_count':{'text':'Количество отправленных клубничек','params':{'value':0}},'spraveb_count':{'text':'Количество отправленных орехов','params':{'value':0}}}
@@ -436,7 +433,6 @@ class quotes:
         return {}
 
     def quoting(self, event):
-        print('вуф')
         if event.type == VkEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.user_id != 379124050:
@@ -447,10 +443,8 @@ class quotes:
                                 if i_time + 10 < curtime:
                                     self.times.remove(i_time)
                             self.times.append(curtime)
-                            print(self.times)
                             words = event.text.lower().split()
                             is_called = False
-                            print(words)
                             if words[0] == 'карбот' and words[1] == 'цитата':
                                 word = words[2:]
                                 is_called = True
