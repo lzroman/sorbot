@@ -292,10 +292,10 @@ class jirniy:
     def __init__(self, core, gparms):
         self.core = core
         self.gparms = gparms
-        self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0}
+        self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat]
         
     def stats(self):
         return {}
@@ -363,6 +363,14 @@ class jirniy:
                 time.sleep(1)
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
+    def pidocat(self, event):
+        if self.is_chat(event):
+            if event.text.lower() == "пидор":
+                if self.cooldown('pidocat'):
+                    upload = self.core.upload.photo_messages('pidocat.jpg')[0]
+                    time.sleep(1)
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                                             
 
 
 
