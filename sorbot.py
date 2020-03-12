@@ -365,7 +365,7 @@ class jirniy:
 
     def pidocat(self, event):
         if self.is_chat(event):
-            if event.text.lower() == "пидор":
+            if event.text.lower().find('пидор') != -1:
                 if self.cooldown('pidocat'):
                     upload = self.core.upload.photo_messages('pidocat.jpg')[0]
                     time.sleep(1)
