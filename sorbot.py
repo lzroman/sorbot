@@ -234,6 +234,53 @@ class stickers:
 
 
 
+
+
+class bassboost:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+
+    def achievements(self):
+        return {}
+
+    def actions(self):
+        return [self.bassboost]
+    
+    def bassboost(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    uname = str(event.user_id)
+                    print(event.raw[-2])
+                    if 'attach1_type' in event.raw[-2].keys():
+                        if event.raw[-2]['attach1_type'] == 'audio':
+                            mdata = event.raw[-2]['attach1'].split('_')
+                            wtf = self.core.audio.get_audio_by_id(mdata[0], mdata[1])
+                            print(wtf)
+                            if event.raw[-2]['attach1'] == '145':
+                                self.gparms['is_ach_on_user']('klubn',uname)
+                                self.gparms['achieve']('klubn',uname)
+                                self.gparms['is_stat_on_user']('klubn_count',uname)
+                                self.gparms['stats'][uname]['klubn_count']['value'] += 1
+                            if event.raw[-2]['attach1'] == '163':
+                                self.gparms['is_ach_on_user']('spraveb',uname)
+                                self.gparms['achieve']('spraveb',uname)
+                                self.gparms['is_stat_on_user']('spraveb_count',uname)
+                                self.gparms['stats'][uname]['spraveb_count']['value'] += 1
+
+    def stats(self):
+        return {}
+
+
+
+
+
+
+
+
+
+
 class achievements_list:
     def __init__(self, core, gparms):
         self.core = core
@@ -738,4 +785,5 @@ bot.plugins_add(achievements_list)
 bot.plugins_add(stickers)
 bot.plugins_add(when_join)
 bot.plugins_add(quotes)
+bot.plugins_add(bassboost)
 bot.start()

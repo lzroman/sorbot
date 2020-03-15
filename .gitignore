@@ -2,3 +2,4 @@ config.json
 newtempfile.jpg
 tempfile.jpg
 *.json
+*.txt

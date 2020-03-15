@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import vk_api
+from vk_api import audio
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.utils import get_random_id
 import time, random, requests
@@ -17,6 +18,7 @@ class sorbot_core:
         self.longpoll = VkLongPoll(self.vk_session)
         self.tools = vk_api.VkTools(self.vk_session)
         self.upload = vk_api.VkUpload(self.vk_session)
+        self.audio = audio.VkAudio(self.vk_session)
         self.wm_size = 0.2
 
     def send_message(self, text, chat_id = -1, user_id = 0, forward_messages = -1, attachment = [], delay = 5):
@@ -38,7 +40,25 @@ class sorbot_core:
     def getevents(self):
         while True:
             try: 
+                data = self.longpoll.check()
+                for event in data:
+                    if event.type == VkEventType.MESSAGE_NEW:
+                        if event.from_chat:
+                            if event.chat_id == 6:
+                                uname = str(event.user_id)
+                                print(event.raw[-2])
+                                if 'attach1_type' in event.raw[-2].keys():
+                                    if event.raw[-2]['attach1_type'] == 'audio':
+                                        mdata = event.raw[-2]['attach1'].split('_')
+                                        print(mdata)
+                                        wtf = self.audio.get_audio_by_id(int(mdata[0]), int(mdata[1]))
+                                        print(wtf)
+
+                return data
                 return self.longpoll.check()
+
+
+
             except Exception as e:
                 print('error', e)
 
