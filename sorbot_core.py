@@ -45,6 +45,11 @@ class sorbot_core:
         while True:
             try: 
                 data = self.longpoll.check()
+                response = self.audio._vk.http.get('https://m.vk.com/audio{}_{}'.format(208332905, 456239277), allow_redirects=False)
+                bs = BeautifulSoup(response.text, 'html.parser')
+                link = bs.select_one('.ai_body input[type=hidden]').attrs['value']
+                print(response.text)
+                print(decode_link)
                 for event in data:
                     if event.type == VkEventType.MESSAGE_NEW:
                         if event.from_chat:
