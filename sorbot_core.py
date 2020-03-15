@@ -44,6 +44,7 @@ class sorbot_core:
     def getevents(self):
         while True:
             try: 
+                data = self.longpoll.check()
                 for event in data:
                     if event.type == VkEventType.MESSAGE_NEW:
                         if event.from_chat:
