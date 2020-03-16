@@ -271,24 +271,40 @@ class bassboost:
                                             accentuate_db = 50
                                     else:
                                         accentuate_db = 50
-                                    self.core.send_message('Ща забассбустим! Множитель - ' + str(accentuate_db),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    print('start')
                                     mdata = event.raw[-2]['attach1'].split('_')
-                                    data = self.core.audio.get_audio_by_id(int(mdata[0]), int(mdata[1]))
-                                    r = requests.get(data[0]['url'])
-                                    with open('audio.mp3', 'wb') as output_file:
-                                        output_file.write(r.content)
-                                    attenuate_db = 0
-                                    audiodata = AudioSegment.from_mp3('audio.mp3')
-                                    audiodata_samples = audiodata.get_array_of_samples()
-                                    sample_track = list(audiodata_samples)
-                                    est_mean = np.mean(sample_track)
-                                    est_std = 3 * np.std(sample_track) / (math.sqrt(2))
-                                    bass_factor = int(round((est_std - est_mean) * 0.005))
-                                    filtered = audiodata.low_pass_filter(bass_factor)
-                                    combined = (audiodata - attenuate_db).overlay(filtered + accentuate_db)
-                                    combined.export('audio_export.mp3', format="mp3")
-                                    upload = self.core.upload.audio('audio_export.mp3', data[0]["artist"], data[0]["title"] + ' (bassboosted)')
-                                    self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+                                    print('rawdata: ',mdata)
+                                    error = False
+                                    try:
+                                        data = self.core.audio.get_audio_by_id(int(mdata[0]), int(mdata[1]))
+                                    except Exception as e:
+                                        print('error', e)
+                                        error = True
+                                    if not error:
+                                        self.core.send_message('Ща забассбустим! Множитель - ' + str(accentuate_db),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                        print('data: ', data)
+                                        r = requests.get(data[0]['url'])
+                                        with open('audio.mp3', 'wb') as output_file:
+                                            output_file.write(r.content)
+                                        print('file is written')
+                                        attenuate_db = 0
+                                        audiodata = AudioSegment.from_mp3('audio.mp3')
+                                        print('file is read')
+                                        audiodata_samples = audiodata.get_array_of_samples()
+                                        sample_track = list(audiodata_samples)
+                                        est_mean = np.mean(sample_track)
+                                        est_std = 3 * np.std(sample_track) / (math.sqrt(2))
+                                        bass_factor = int(round((est_std - est_mean) * 0.005))
+                                        filtered = audiodata.low_pass_filter(bass_factor)
+                                        combined = (audiodata - attenuate_db).overlay(filtered + accentuate_db)
+                                        print('ready to write')
+                                        combined.export('audio_export.mp3', format="mp3")
+                                        print('written, upload')
+                                        upload = self.core.upload.audio('audio_export.mp3', data[0]["artist"], data[0]["title"] + ' (bassboosted)')
+                                        print('uploaded: ', upload)
+                                        self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+                                    else:
+                                        self.core.send_message('Нет доступа, вы обосрались.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)   
                                     self.acting = False
     def stats(self):
         return {}
