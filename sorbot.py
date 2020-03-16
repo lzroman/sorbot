@@ -8,6 +8,10 @@ import time, random
 from threading import Thread
 import datetime
 import json
+import requests
+from pydub import AudioSegment
+import numpy as np
+import math
 
 #import discord
 
@@ -240,6 +244,7 @@ class bassboost:
     def __init__(self, core, gparms):
         self.core = core
         self.gparms = gparms
+        self.acting = False
 
     def achievements(self):
         return {}
@@ -251,24 +256,40 @@ class bassboost:
         if event.type == VkEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.chat_id == self.gparms['chat_id']:
-                    uname = str(event.user_id)
-                    print(event.raw[-2])
                     if 'attach1_type' in event.raw[-2].keys():
                         if event.raw[-2]['attach1_type'] == 'audio':
-                            mdata = event.raw[-2]['attach1'].split('_')
-                            wtf = self.core.audio.get_audio_by_id(mdata[0], mdata[1])
-                            print(wtf)
-                            if event.raw[-2]['attach1'] == '145':
-                                self.gparms['is_ach_on_user']('klubn',uname)
-                                self.gparms['achieve']('klubn',uname)
-                                self.gparms['is_stat_on_user']('klubn_count',uname)
-                                self.gparms['stats'][uname]['klubn_count']['value'] += 1
-                            if event.raw[-2]['attach1'] == '163':
-                                self.gparms['is_ach_on_user']('spraveb',uname)
-                                self.gparms['achieve']('spraveb',uname)
-                                self.gparms['is_stat_on_user']('spraveb_count',uname)
-                                self.gparms['stats'][uname]['spraveb_count']['value'] += 1
-
+                            text_words = event.text.lower().split()
+                            if text_words[0] == 'карбот' and text_words[1] == 'басы':
+                                if self.acting:
+                                    self.core.send_message('Я ещё не забассбустил предыдущий трек, пришли чуть позже',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                else:
+                                    self.acting = True
+                                    if len(text_words) > 2:
+                                        if text_words[2].isdigit():
+                                            accentuate_db = int(text_words[2])
+                                        else:
+                                            accentuate_db = 50
+                                    else:
+                                        accentuate_db = 50
+                                    self.core.send_message('Ща забассбустим! Множитель - ' + str(accentuate_db),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    mdata = event.raw[-2]['attach1'].split('_')
+                                    data = self.core.audio.get_audio_by_id(int(mdata[0]), int(mdata[1]))
+                                    r = requests.get(data[0]['url'])
+                                    with open('audio.mp3', 'wb') as output_file:
+                                        output_file.write(r.content)
+                                    attenuate_db = 0
+                                    audiodata = AudioSegment.from_mp3('audio.mp3')
+                                    audiodata_samples = audiodata.get_array_of_samples()
+                                    sample_track = list(audiodata_samples)
+                                    est_mean = np.mean(sample_track)
+                                    est_std = 3 * np.std(sample_track) / (math.sqrt(2))
+                                    bass_factor = int(round((est_std - est_mean) * 0.005))
+                                    filtered = audiodata.low_pass_filter(bass_factor)
+                                    combined = (audiodata - attenuate_db).overlay(filtered + accentuate_db)
+                                    combined.export('audio_export.mp3', format="mp3")
+                                    upload = self.core.upload.audio('audio_export.mp3', data[0]["artist"], data[0]["title"] + ' (bassboosted)')
+                                    self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+                                    self.acting = False
     def stats(self):
         return {}
 

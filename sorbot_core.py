@@ -9,7 +9,10 @@ import time, random, requests
 from PIL import Image
 import json
 
-from bs4 import BeautifulSoup
+from pydub import AudioSegment
+import numpy as np
+import math
+
 
 class sorbot_core:
     def __init__(self, token):
@@ -43,31 +46,8 @@ class sorbot_core:
 
     def getevents(self):
         while True:
-            try: 
-                data = self.longpoll.check()
-                response = self.audio._vk.http.get('https://m.vk.com/audio{}_{}'.format(208332905, 456239277), allow_redirects=False)
-                bs = BeautifulSoup(response.text, 'html.parser')
-                link = bs.select_one('.ai_body input[type=hidden]').attrs['value']
-                print(response.text)
-                print(decode_link)
-                for event in data:
-                    if event.type == VkEventType.MESSAGE_NEW:
-                        if event.from_chat:
-                            if event.chat_id == 6:
-                                uname = str(event.user_id)
-                                print(event.raw[-2])
-                                if 'attach1_type' in event.raw[-2].keys():
-                                    if event.raw[-2]['attach1_type'] == 'audio':
-                                        mdata = event.raw[-2]['attach1'].split('_')
-                                        print(mdata)
-                                        wtf = self.audio.get_audio_by_id(int(mdata[0]), int(mdata[1]))
-                                        print(wtf)
-
-                return data
+            try:
                 return self.longpoll.check()
-
-
-
             except Exception as e:
                 print('error', e)
 
