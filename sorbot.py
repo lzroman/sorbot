@@ -98,21 +98,27 @@ class sorbot:
 
         with open('achievements.json', 'r') as f:
             ach_file = json.load(f)
+            self.gparms['achievements'] = ach_file.copy()
+            '''
             for user in ach_file:
                 self.gparms['achievements'][user] = {}
                 for ach in ach_file[user]:
                     self.gparms['achievements'][user][ach] = {}
                     for par in ach_file[user][ach]:
                         self.gparms['achievements'][user][ach] = ach_file[user][ach].copy()
+                        '''
 
         with open('stats.json', 'r') as f:
             stats_file = json.load(f)
+            self.gparms['stats'] = stats_file.copy()
+            '''
             for user in stats_file:
                 self.gparms['stats'][user] = {}
                 for stat in stats_file[user]:
                     self.gparms['stats'][user][stat] = {}
                     for par in stats_file[user][stat]:
                         self.gparms['stats'][user][stat] = stats_file[user][stat].copy()
+                        '''
         print(self.gparms['achievements'])
         print(self.gparms['stats'])
 
@@ -195,6 +201,61 @@ class template:
 
 
 
+
+class voicetomusic:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+        self.attachments = []
+
+    def achievements(self):
+        return {}
+
+    def actions(self):
+        return [self.action]
+    
+    def action(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    if event.text.lower() == 'карбот музыка':
+                        #print(event.message_id)
+                        answer = self.core.vk_session.method('messages.getById',{'message_ids' : event.message_id})
+                        print(answer)
+                        self.fwd(answer['items'][0])
+                        print(self.attachments)
+                        if self.attachments:
+                            attach_text = ','.join(self.attachments)
+                            self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment=attach_text)
+                        self.attachments.clear()
+        
+
+    
+    def fwd(self, obj):
+        if len(self.attachments) < 10:
+            #if 'conversation_message_id' in obj.keys():
+            #    self.fwd(self.core.vk_session.method('messages.getByConversationMessageId',{'peer_id' : obj['peer_id'], 'conversation_message_ids': obj['conversation_message_id']})['items'][0])
+            if 'reply_message' in obj.keys():
+                self.fwd(obj['reply_message'])
+            if 'fwd_messages' in obj.keys():
+                for subobj in obj['fwd_messages']:
+                    self.fwd(subobj)
+            for attachment in obj['attachments']:
+                if attachment['type'] == 'audio_message':
+                    if attachment['audio_message']['duration'] > 3:
+                        self.attachments.append(self.work(attachment['audio_message']['link_mp3']))
+
+    def work(self, link):
+        r = requests.get(link)
+        with open('audio.mp3', 'wb') as output_file:
+            output_file.write(r.content)
+        upload = self.core.upload.audio('audio.mp3', "artist", "title")
+        print('uploaded: ', upload)
+        #self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+        return('audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+        
+    def stats(self):
+        return {}
 
 
 
@@ -813,7 +874,7 @@ with open('config.json', 'r') as f:
         conf = json.load(f)
 
 bot = sorbot(conf['token'], conf['chat_id'], conf['botname'], conf['admin_ids'])
-bot.plugins_add(jirniy)
+#bot.plugins_add(jirniy)
 bot.plugins_add(pomyanem)
 #bot.plugins_add(ban_new_user)
 bot.plugins_add(ruletka)
@@ -822,5 +883,6 @@ bot.plugins_add(achievements_list)
 bot.plugins_add(stickers)
 bot.plugins_add(when_join)
 bot.plugins_add(quotes)
-bot.plugins_add(bassboost)
+#bot.plugins_add(bassboost)
+bot.plugins_add(voicetomusic)
 bot.start()

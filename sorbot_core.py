@@ -64,36 +64,37 @@ class sorbot_core:
                     if attachment['type'] != 'photo' and 'owner_id' in attachment.keys():
                         newattachments += ',' + attachment['type'] + str(attachment[attachment['type']]['owner_id']) + '_' + str(attachment[attachment['type']]['id'])
                     else:
-                        z = 0
-                        y = 0
-                        for size in attachment['photo']['sizes']:
-                            if 'x' == size['type'] and y == 0 and z == 0:
-                                getsize = size
-                            if 'y' == size['type'] and z == 0:
-                                y = 1
-                                getsize = size
-                            if 'z' == size['type']:
-                                z = 1
-                                getsize = size
-                            if 'w' == size['type']:
-                                getsize = size
-                                break
-                        open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
-                        im = Image.open('tempfile.jpg')
-                        width, height = im.size
-                        if width > height:
-                            newwidth = int(width * self.wm_size)
-                            newheight = int(wm.size[1] * newwidth / wm.size[0])
-                        else:
-                            newheight = int(height * self.wm_size)
-                            newwidth = int(wm.size[0] * newheight / wm.size[1])
-                        tempwm = wm.resize((newwidth, newheight))
-                        xpos = random.randrange(width - newwidth)
-                        ypos = random.randrange(height - newheight)
-                        im.paste(tempwm, (xpos, ypos), tempwm)
-                        im.save('newtempfile.jpg')
-                        upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
-                        newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
+                        if 'photo' in attachment.keys():
+                            z = 0
+                            y = 0
+                            for size in attachment['photo']['sizes']:
+                                if 'x' == size['type'] and y == 0 and z == 0:
+                                    getsize = size
+                                if 'y' == size['type'] and z == 0:
+                                    y = 1
+                                    getsize = size
+                                if 'z' == size['type']:
+                                    z = 1
+                                    getsize = size
+                                if 'w' == size['type']:
+                                    getsize = size
+                                    break
+                            open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
+                            im = Image.open('tempfile.jpg')
+                            width, height = im.size
+                            if width > height:
+                                newwidth = int(width * self.wm_size)
+                                newheight = int(wm.size[1] * newwidth / wm.size[0])
+                            else:
+                                newheight = int(height * self.wm_size)
+                                newwidth = int(wm.size[0] * newheight / wm.size[1])
+                            tempwm = wm.resize((newwidth, newheight))
+                            xpos = random.randrange(width - newwidth)
+                            ypos = random.randrange(height - newheight)
+                            im.paste(tempwm, (xpos, ypos), tempwm)
+                            im.save('newtempfile.jpg')
+                            upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
+                            newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
                 post['attachments'] = newattachments
                 if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
                     poll = self.vk_session.method('polls.create',{'question' : 'Карательность блюда', 'is_anonymous' : 1, 'add_answers' : json.dumps(['1','2','3','4','5'])})
