@@ -873,7 +873,7 @@ with open('config.json', 'r') as f:
         conf = json.load(f)
 
 bot = sorbot(conf['token'], conf['chat_id'], conf['botname'], conf['admin_ids'])
-#bot.plugins_add(jirniy)
+bot.plugins_add(jirniy)
 bot.plugins_add(pomyanem)
 #bot.plugins_add(ban_new_user)
 bot.plugins_add(ruletka)
