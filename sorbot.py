@@ -440,7 +440,7 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.okurok, self.dapizda, self.privet, self.pidocat]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat]
         
     def stats(self):
         return {}
