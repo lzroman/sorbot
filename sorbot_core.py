@@ -26,7 +26,6 @@ class sorbot_core:
         self.tools = vk_api.VkTools(self.vk_session)
         self.upload = vk_api.VkUpload(self.vk_session)
         self.audio = audio.VkAudio(self.vk_session_a)
-        self.wm_size = 0.2
 
     def send_message(self, text, chat_id = -1, user_id = 0, forward_messages = -1, attachment = [], delay = 5):
         time.sleep(random.random() * delay)
@@ -50,65 +49,6 @@ class sorbot_core:
                 return self.longpoll.check()
             except Exception as e:
                 print('error', e)
-
-    def get_news_suggested(self, public_id, path):
-        wm = Image.open(path)
-        wall = self.tools.get_all('wall.get', 100, {'owner_id': -public_id, 'filter': 'suggests'})
-        print(wall['count'])
-        for post in wall['items']:
-            post['post_id'] = post['id']
-            if 'attachments' in post.keys():
-            #if len(post['attachments']) > 0:
-                newattachments = ''
-                for attachment in post['attachments']:
-                    if attachment['type'] != 'photo' and 'owner_id' in attachment.keys():
-                        newattachments += ',' + attachment['type'] + str(attachment[attachment['type']]['owner_id']) + '_' + str(attachment[attachment['type']]['id'])
-                    else:
-                        if 'photo' in attachment.keys():
-                            z = 0
-                            y = 0
-                            for size in attachment['photo']['sizes']:
-                                if 'x' == size['type'] and y == 0 and z == 0:
-                                    getsize = size
-                                if 'y' == size['type'] and z == 0:
-                                    y = 1
-                                    getsize = size
-                                if 'z' == size['type']:
-                                    z = 1
-                                    getsize = size
-                                if 'w' == size['type']:
-                                    getsize = size
-                                    break
-                            open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
-                            im = Image.open('tempfile.jpg')
-                            width, height = im.size
-                            if width > height:
-                                newwidth = int(width * self.wm_size)
-                                newheight = int(wm.size[1] * newwidth / wm.size[0])
-                            else:
-                                newheight = int(height * self.wm_size)
-                                newwidth = int(wm.size[0] * newheight / wm.size[1])
-                            tempwm = wm.resize((newwidth, newheight))
-                            xpos = random.randrange(width - newwidth)
-                            ypos = random.randrange(height - newheight)
-                            im.paste(tempwm, (xpos, ypos), tempwm)
-                            im.save('newtempfile.jpg')
-                            upload = self.upload.photo_wall('newtempfile.jpg', group_id = public_id)
-                            newattachments += ',photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
-                post['attachments'] = newattachments
-                if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
-                    poll = self.vk_session.method('polls.create',{'question' : 'Карательность блюда', 'is_anonymous' : 1, 'add_answers' : json.dumps(['1','2','3','4','5'])})
-                    #print(poll)
-                    newattachments += ',poll' + str(poll['owner_id']) + '_' + str(poll['id'])
-                newpost = dict()
-                newpost['attachments'] = newattachments[1:]
-                newpost['owner_id'] = -public_id
-                newpost['message'] = post['text']
-                newpost['post_id'] = post['id']
-                newpost['publish_date'] = int(time.time() + 2000000)
-                newpost['signed'] = 1
-                self.vk_session.method('wall.post', newpost)
-
 
 
 
