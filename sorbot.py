@@ -64,6 +64,10 @@ class sorbot:
                 with open('stats.json', 'w') as outfile:
                     json.dump(self.gparms['stats'], outfile)
                 break
+            if inp == 'f':
+                upload = self.core.upload.photo_messages('bye.jpg')[0]
+                self.core.vk.messages.send(message='Прощайте.', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
 
     def saving_ach(self):
         time.sleep(600)
@@ -567,7 +571,7 @@ class jirniy:
     def cooldown(self, p):
         curtime = int(time.time())
         if self.time[p] < curtime:
-            self.time[p] =  curtime + 600
+            self.time[p] =  curtime + 10
             return True
         else:
             return False
