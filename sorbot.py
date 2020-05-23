@@ -554,7 +554,7 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv]
         
     def stats(self):
         return {}
@@ -634,6 +634,12 @@ class jirniy:
             if event.text.lower().find('коронавирус') != -1:
                 time.sleep(1)
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='video379124050_456239018')
+
+    def zabiv(self, event):
+        if self.is_chat(event):
+            if event.text.lower().find('забив') != -1:
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='video379124050_456239019')
 
 
 
