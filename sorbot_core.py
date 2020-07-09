@@ -9,7 +9,7 @@ import time, random, requests
 from PIL import Image
 import json
 
-from pydub import AudioSegment
+#from pydub import AudioSegment
 import numpy as np
 import math
 

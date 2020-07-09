@@ -9,7 +9,7 @@ from threading import Thread
 import datetime
 import json
 import requests
-from pydub import AudioSegment
+#from pydub import AudioSegment
 import numpy as np
 import math
 from PIL import Image
@@ -166,7 +166,7 @@ class sorbot:
             action(event)
         except Exception as e:
             #self.error_log(e)
-            pass
+            print(e, flush=True)
     
     def error_log(self, text):
         for admin in self.admin_ids:
@@ -193,126 +193,6 @@ class template:
 
     def stats(self):
         return {'stat':{'text':'','params':{'value':0}}}
-
-
-
-
-
-class wmark:
-    def __init__(self, core, gparms):
-        self.core = core
-        self.gparms = gparms
-        self.wm_size = 0.2
-        #189945062 - test
-        #137996395 - kk
-        self.public_id = 137996395
-        self.phrase = 'карбот'
-        self.wm = Image.open('wm_kk.png')
-        while True:
-            self.get_news_suggested()
-            time.sleep(600)
-
-    def achievements(self):
-        return {}
-
-    def actions(self):
-        return []
-    
-    
-    def get_news_suggested(self):
-        wall = self.core.tools.get_all('wall.get', 100, {'owner_id': -self.public_id, 'filter': 'suggests'})
-        for post in wall['items']:
-            post['post_id'] = post['id']
-            if 'attachments' in post.keys():
-            #if len(post['attachments']) > 0:
-                newattachments = ''
-                for attachment in post['attachments']:
-                    if attachment['type'] != 'photo' and 'owner_id' in attachment.keys():
-                        newattachments += ',' + attachment['type'] + str(attachment[attachment['type']]['owner_id']) + '_' + str(attachment[attachment['type']]['id'])
-                    else:
-                        if 'photo' in attachment.keys():
-                            newattachments += ',' + self.put_wmark(attachment['photo'])
-                post['attachments'] = newattachments
-                if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
-                    poll = self.core.vk_session.method('polls.create',{'question' : 'Карательность блюда', 'is_anonymous' : 1, 'add_answers' : json.dumps(['1','2','3','4','5'])})
-                    #print(poll)
-                    newattachments += ',poll' + str(poll['owner_id']) + '_' + str(poll['id'])
-                newpost = dict()
-                newpost['attachments'] = newattachments[1:]
-                newpost['owner_id'] = -self.public_id
-                newpost['message'] = post['text']
-                newpost['post_id'] = post['id']
-                newpost['publish_date'] = int(time.time() + 2000000)
-                newpost['signed'] = 1
-                self.core.vk_session.method('wall.post', newpost)
-        wallpostponed = self.core.tools.get_all('wall.get', 100, {'owner_id': -self.public_id, 'filter': 'postponed'})
-        for post in wallpostponed['items']:
-            phrase_pos = post['text'].lower().find(self.phrase)
-            if phrase_pos != -1:
-                post['post_id'] = post['id']
-                if 'attachments' in post.keys():
-                #if len(post['attachments']) > 0:
-                    newattachments = ''
-                    for attachment in post['attachments']:
-                        if attachment['type'] != 'photo' and 'owner_id' in attachment.keys():
-                            newattachments += ',' + attachment['type'] + str(attachment[attachment['type']]['owner_id']) + '_' + str(attachment[attachment['type']]['id'])
-                        else:
-                            if 'photo' in attachment.keys():
-                                newattachments += ',' + self.put_wmark(attachment['photo'])
-                    post['attachments'] = newattachments
-                    if post['text'].find('#конкурс_каркул') != -1 or post['text'].find('#Конкурс_каркул') != -1:
-                        poll = self.core.vk_session.method('polls.create',{'question' : 'Карательность блюда', 'is_anonymous' : 1, 'add_answers' : json.dumps(['1','2','3','4','5'])})
-                        #print(poll)
-                        newattachments += ',poll' + str(poll['owner_id']) + '_' + str(poll['id'])
-                    newpost = dict()
-                    newpost['attachments'] = newattachments[1:]
-                    newpost['owner_id'] = -self.public_id
-                    newpost['message'] = post['text'][:phrase_pos] + post['text'][phrase_pos + len(self.phrase):]
-                    newpost['post_id'] = post['id']
-                    newpost['publish_date'] = post['date']
-                    self.core.vk_session.method('wall.edit', newpost)
-
-
-
-
-
-    def put_wmark(self, content):
-        z = 0
-        y = 0
-        for size in content['sizes']:
-            if 'x' == size['type'] and y == 0 and z == 0:
-                getsize = size
-            if 'y' == size['type'] and z == 0:
-                y = 1
-                getsize = size
-            if 'z' == size['type']:
-                z = 1
-                getsize = size
-            if 'w' == size['type']:
-                getsize = size
-                break
-        open('tempfile.jpg', 'wb').write(requests.get(getsize['url']).content)
-        im = Image.open('tempfile.jpg')
-        width, height = im.size
-        if width > height:
-            newwidth = int(width * self.wm_size)
-            newheight = int(self.wm.size[1] * newwidth / self.wm.size[0])
-        else:
-            newheight = int(height * self.wm_size)
-            newwidth = int(self.wm.size[0] * newheight / self.wm.size[1])
-        tempwm = self.wm.resize((newwidth, newheight))
-        xpos = random.randrange(int(width / 4 - newwidth / 2), int(width * 3 / 4 - newwidth / 2))
-        ypos = random.randrange(int(height / 4 - newheight / 2), int(height * 3 / 4 - newheight / 2))
-        im.paste(tempwm, (xpos, ypos), tempwm)
-        im.save('newtempfile.jpg')
-        upload = self.core.upload.photo_wall('newtempfile.jpg', group_id = self.public_id)
-        return 'photo' + str(upload[0]['owner_id']) + '_' + str(upload[0]['id'])
-
-    def stats(self):
-        return {}
-
-
-
 
 
 
@@ -554,7 +434,7 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet]
         
     def stats(self):
         return {}
@@ -642,6 +522,15 @@ class jirniy:
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='video379124050_456239019')
 
 
+    def nebuhtet(self, event):
+        if self.is_chat(event):
+            words = event.text.lower().split()
+            if len(words) > 3:
+                if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
+                    upload = self.core.upload.photo_messages('nebuhtet.jpg')[0]
+                    time.sleep(1)
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+      
 
 class pomyanem:
     def __init__(self, core, gparms):
