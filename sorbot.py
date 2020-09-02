@@ -32,7 +32,7 @@ class sorbot:
         self.threads = []
         self.admin_list = []
         self.get_admins()
-        self.gparms = {'chat_id': self.chat_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}}
+        self.gparms = {'chat_id': self.chat_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}, 'help': [], 'help_t': ''}
         self.gparms['is_ach_on_user'] = self.is_ach_on_user
         self.gparms['achieve'] = self.achieve
         self.gparms['is_stat_on_user'] = self.is_stat_on_user
@@ -88,8 +88,13 @@ class sorbot:
             newstat = plugin.stats()
             for stat in newstat:
                 self.gparms['stats_original'][stat] = newstat[stat].copy()
+            newhelp = plugin.help()
+            for helpp in newhelp:
+                self.gparms['help'].append(helpp)
             for action in plugin.actions():
                 self.actions.append(action)
+        for helpp in self.gparms['help']:
+            self.gparms['help_t'] += '\n- ' + helpp
 
         with open('achievements.json', 'r') as f:
             ach_file = json.load(f)
@@ -152,6 +157,7 @@ class sorbot:
             self.gparms['stats'][uname] = {}
             self.gparms['stats'][uname][stat] = self.gparms['stats_original'][stat]['params'].copy()
 
+
     def is_ach_on_user(self, ach, user):
         uname = str(user)
         if uname in self.gparms['achievements'].keys():
@@ -194,6 +200,38 @@ class template:
     def stats(self):
         return {'stat':{'text':'','params':{'value':0}}}
 
+    def help(self):
+        return []
+
+
+
+
+
+
+
+class showhelp:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+
+    def achievements(self):
+        return {}
+
+    def actions(self):
+        return [self.action]
+    
+    def action(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    if event.text.lower() == 'карбот помощь' or event.text.lower() == 'карбот help' or event.text.lower() == 'карбот':
+                        self.core.send_message('Доступные функции бота:\n' + self.gparms['help_t'],chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+
+    def stats(self):
+        return {}
+
+    def help(self):
+        return ['Команды "карбот", "карбот help" и "карбот помощь" покажут эту справку']
 
 
 class voicetomusic:
@@ -207,6 +245,9 @@ class voicetomusic:
 
     def actions(self):
         return [self.action]
+
+    def help(self):
+        return ['Команда "карбот музыка" и прикреплённое сообщение с голосовым сообщением длительностью более 3 секунд вернёт его как аудиозапись']
     
     def action(self, event):
         if event.type == VkEventType.MESSAGE_NEW:
@@ -290,6 +331,9 @@ class stickers:
 
     def stats(self):
         return {'klubn_count':{'text':'Количество отправленных клубничек','params':{'value':0}},'spraveb_count':{'text':'Количество отправленных орехов','params':{'value':0}}}
+
+    def help(self):
+        return ['Считать стикеры с клубничками и орехами (отображаются в статистике)']
 
 
 
@@ -422,9 +466,11 @@ class achievements_list:
                         for ach in self.gparms['achievements_original']:
                             text += '- ' + self.gparms['achievements_original'][ach]['text'] + ': ' + self.gparms['achievements_original'][ach]['desc'] + '\n'
                         self.core.send_message('Доступные ачивки - ' + str(len(self.gparms['achievements_original'])) + ':\n' + text,chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
- 
 
-                    
+    def help(self):
+        return ['Команда "карбот ачивки" покажет полученные вами ачивки', 'Команда "карбот все ачивки" покажет все доступные ачивки', 'Команда "карбот статы" отображает ваши статистики']
+
+
 
 
 class jirniy:
@@ -530,6 +576,9 @@ class jirniy:
                     upload = self.core.upload.photo_messages('nebuhtet.jpg')[0]
                     time.sleep(1)
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def help(self):
+        return ['Бот реагирует картинкой или роликом на некоторые определённые фразы']
       
 
 class pomyanem:
@@ -553,6 +602,9 @@ class pomyanem:
         if event.type_id == 7 and event.chat_id == self.gparms['chat_id']:
             upload = self.core.upload.photo_messages('dosvyazi.jpg')[0]
             self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=self.gparms['chat_id'],attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def help(self):
+        return ['Бот реагирует на выход из беседы']
 
 class when_join:
     def __init__(self, core, gparms):
@@ -578,6 +630,9 @@ class when_join:
                             val = next(item for item in vals['items'] if item['member_id'] == event.user_id)
                             date = datetime.datetime.fromtimestamp(val['join_date'])
                             self.core.send_message('Вы вступили в беседу ' + date.strftime('%Y-%m-%d %H:%M:%S'),chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+
+    def help(self):
+        return ['Команда "карбот вступление" покажет дату последнего вступления отправившего её пользователя в беседу']
 
 class quotes:
     def __init__(self, core, gparms):
@@ -620,7 +675,7 @@ class quotes:
                                     word = random.choice(words)
                                     words.remove(word)
                                     if len(word) > 5:
-                                        word = word[0:-3]
+                                        word = word[0:-2]
                                     quote = [q for q in self.quotes if q.lower().find(word) != -1]
                                     if len(quote):
                                         is_found = True
@@ -630,6 +685,9 @@ class quotes:
                                     quote = random.choice(self.quotes)
                                 self.core.send_message(quote,chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                                 self.trigtime = curtime
+
+    def help(self):
+        return ['Команда "карбот цитата" вернёт случайную цитату из своей библиотеки, можно дописать слова для поиска']
 
 
 class ban_new_user:
@@ -731,6 +789,9 @@ class ban_new_user:
                 print('user clean')
                 self.newfags.remove(newfag)
 
+    def help(self):
+        return ['Бот автобанит тех, кто зашёл в беседу и не отписался в течение 5 минут', 'Команда "карбот антибан" очищает список текущих претендентов на бан из предыдущего пункта']
+
 
 
 
@@ -811,6 +872,9 @@ class ruletka:
                                 self.gparms['is_ach_on_user']('odin_strel',uname)
                                 self.gparms['achieve']('odin_strel',uname)
                             self.ruletka_list.clear()
+
+    def help(self):
+        return ['Команда "карбот рулетка" запускает рулетку, попробуйте!', 'Команда "стреляй" при запущенной рулетке из предыдущего пункта делает Вас её участником']
 
 
 class sorbetoban:
@@ -898,6 +962,9 @@ class sorbetoban:
             return True
         else:
             return False
+
+    def help(self):
+        return ['Бан за упоминание сорбета']
 
 '''    
     
