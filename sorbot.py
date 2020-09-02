@@ -645,8 +645,8 @@ class ban_new_user:
         def __init__(self, core, gparms, id, time):
             self.core = core
             self.gparms = gparms
-            self.sleep1 = 10
-            self.sleep2 = 20
+            self.sleep1 = 150
+            self.sleep2 = 150
             self.id = id
             self.idc = id
             self.time = time
