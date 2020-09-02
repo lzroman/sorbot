@@ -640,6 +640,7 @@ class ban_new_user:
         self.newfags_time = []
         self.newfags_state = []
         self.isrun = False
+        
 
     class newfag:
         def __init__(self, core, gparms, id, time):
@@ -710,6 +711,19 @@ class ban_new_user:
                                 print('user not newfag: ', event.user_id)
                                 newfag.zerosent = True
                             break
+                    if event.text.lower() == 'карбот антибан':
+                        if len(self.newfags):
+                            text = ''
+                            for newfag in self.newfags:
+                                if newfag.id:
+                                    text += '\n@id' + str(newfag.idc) + '(' + self.core.vk_session.method('users.get',{'user_id' : newfag.idc})[0]['first_name'] + ')'
+                                    newfag.id = 0
+                        if len(text):
+                            text = 'Автобан отменён, помилованы следующие:' + text
+                        else:
+                            text = 'Список претендентов на бан пуст.'
+                        self.core.send_message(text,chat_id=self.gparms['chat_id'])
+
 
     def clean(self):
         for newfag in self.newfags:
