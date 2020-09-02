@@ -641,6 +641,33 @@ class ban_new_user:
         self.newfags_state = []
         self.isrun = False
 
+    class newfag:
+        def __init__(self, core, gparms, id, time):
+            self.core = core
+            self.gparms = gparms
+            self.sleep1 = 10
+            self.sleep2 = 20
+            self.id = id
+            self.idc = id
+            self.time = time
+            self.zerosent = False
+            self.sent = False
+            self.rm = False
+            self.thread = Thread(target=self.proc)
+            self.thread.start()
+
+        def proc(self):
+            time.sleep(self.sleep1)
+            if self.id:
+                self.core.send_message('@id' + str(self.idc) + '(' + self.core.vk_session.method('users.get',{'user_id' : self.idc})[0]['first_name'] + '), вы всё ещё ничего не написали в беседе, это чревато баном.',chat_id=self.gparms['chat_id'])
+                time.sleep(self.sleep2)
+                if self.id:
+                    print('user rm: ', self.id)
+                    self.id = 0
+                    self.core.remove_user(self.gparms['chat_id'], self.idc)
+                    self.core.send_message('@id' + str(self.idc) + '(' + self.core.vk_session.method('users.get',{'user_id' : self.idc})[0]['first_name'] + '), бан!',chat_id=self.gparms['chat_id'])
+            self.rm = True
+
     def actions(self):
         return [self.ban_new_user]
     
@@ -651,36 +678,46 @@ class ban_new_user:
         return {}
     
     def ban_new_user(self, event):
+        self.clean()
+
         if event.type_id == 6 and event.chat_id == self.gparms['chat_id']:
-            self.newfags.append(event.info['user_id'])
-            self.newfags_time.append(int(time.time()))
-            self.newfags_state.append(0)
+            print('user added: ', event.info['user_id'])
+            self.newfags.append(self.newfag(self.core, self.gparms, event.info['user_id'], int(time.time())))
             self.core.send_message('@id' + str(event.info['user_id']) + '(' + self.core.vk_session.method('users.get',{'user_id' : event.info['user_id']})[0]['first_name'] + '), добро пожаловать в беседу каркула!\nНе забудьте отписаться, чтобы мы удостоверились, что вы не бот, и не забанили вас.',chat_id=self.gparms['chat_id'])
+        
+        elif (event.type_id == 8 or event.type_id == 7) and event.chat_id == self.gparms['chat_id']:
+            print('user gone0: ', event.info['user_id'])
+            for newfag in self.newfags:
+                if event.info['user_id'] == newfag.id:
+                    print('user gone: ', event.info['user_id'])
+                    newfag.id = 0
+                    self.core.send_message('@id' + str(newfag.idc) + '(' + self.core.vk_session.method('users.get',{'user_id' : newfag.idc})[0]['first_name'] + ') преждевременно покинул(а) нас.',chat_id=self.gparms['chat_id'])
+                    break
+        
         elif event.type == VkEventType.MESSAGE_NEW:
+            time.sleep(1)
             if event.from_chat:
                 if event.chat_id == self.gparms['chat_id']:
-                    if event.user_id in self.newfags:
-                        ind = self.newfags.index(event.user_id)
-                        if self.newfags_state[ind] == 0:
-                            self.newfags_state[ind] = 1
-                        else:
-                            ind = self.newfags.index(event.user_id)
-                            self.newfags.pop(ind)
-                            self.newfags_time.pop(ind)
-                            self.newfags_state.pop(ind)
-                            self.core.send_message('Теперь вы - полноценный гвардеец @smayanezikom (Карательной кулинарии), поздравляем!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-        curtime = int(time.time())
-        for ind in range(len(self.newfags)):
-            if self.newfags_state[ind] == 1:
-                if curtime - self.newfags_time[ind] > 120:
-                    self.core.send_message('@id' + str(self.newfags[ind]) + '(' + self.core.vk_session.method('users.get',{'user_id' : self.newfags[ind]})[0]['first_name'] + '), вы всё ещё ничего не написали в беседе, это чревато баном.',chat_id=self.gparms['chat_id'])
-                    self.newfags_state[ind] = 2
-            else:
-                if curtime - self.newfags_time[ind] > 300:
-                    self.core.remove_user(self.gparms['chat_id'], self.newfags[ind])
-                    self.newfags.pop(ind)
-                    self.newfags_time.pop(ind)
-                    self.newfags_state.pop(ind)
+                    #print('msg:', event.text)
+                    for newfag in self.newfags:
+                        if event.user_id == newfag.id:
+                            print('msg:', event.text)
+                            if newfag.zerosent:
+                                newfag.id = 0
+                                print('user ready: ', event.user_id)
+                                self.core.send_message('Теперь вы - полноценный гвардеец @smayanezikom (Карательной кулинарии), поздравляем!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            else:
+                                print('user not newfag: ', event.user_id)
+                                newfag.zerosent = True
+                            break
+
+    def clean(self):
+        for newfag in self.newfags:
+            if newfag.rm:
+                print('user clean')
+                self.newfags.remove(newfag)
+
+
 
 
 class ruletka:
