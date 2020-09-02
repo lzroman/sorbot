@@ -712,8 +712,8 @@ class ban_new_user:
                                 newfag.zerosent = True
                             break
                     if event.text.lower() == 'карбот антибан':
+                        text = ''
                         if len(self.newfags):
-                            text = ''
                             for newfag in self.newfags:
                                 if newfag.id:
                                     text += '\n@id' + str(newfag.idc) + '(' + self.core.vk_session.method('users.get',{'user_id' : newfag.idc})[0]['first_name'] + ')'
