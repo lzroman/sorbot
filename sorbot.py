@@ -480,7 +480,7 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh]
+        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
         
     def stats(self):
         return {}
@@ -580,6 +580,27 @@ class jirniy:
         if self.is_chat(event):
             if event.text.lower().find('похуй') != -1:
                 upload = self.core.upload.photo_messages('poh' + str(random.randint(1, 6)) + '.jpg')[0]
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def piter(self, event):
+        if self.is_chat(event):
+            if event.text.lower().find('питер') != -1 or event.text.lower().find('петербург') != -1 or event.text.lower().find('спб') != -1:
+                upload = self.core.upload.photo_messages('piter.jpg')[0]
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def boloto(self, event):
+        if self.is_chat(event):
+            if event.text.lower().find('болот') != -1:
+                upload = self.core.upload.photo_messages('boloto.jpg')[0]
+                time.sleep(1)
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def vinishko(self, event):
+        if self.is_chat(event):
+            if event.text.lower().find('винишк') != -1:
+                upload = self.core.upload.photo_messages('vinishko.jpg')[0]
                 time.sleep(1)
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=event.message_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
