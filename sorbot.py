@@ -220,7 +220,7 @@ class daily_pidor:
             'Подметил'
             'Кукарекнул'
             'Вякнул',
-            'Спизданул, не подумавши',
+            'Спизданул, не подумавши,',
             'Пукнул',
             'Высрал',
             'Пиздобрякнул',
@@ -247,13 +247,13 @@ class daily_pidor:
         ]
 
     def achievements(self):
-        return {'ach':{'text':'','img':'','desc':'','params':{'state':False}}}
+        return {}
 
     def actions(self):
         return [self.action]
 
     def stats(self):
-        return {'stat':{'text':'','params':{'value':0}}}
+        return {}
 
     def help(self):
         return []
