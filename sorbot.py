@@ -217,8 +217,8 @@ class daily_pidor:
         self.words = [
             [
             'Сказал',
-            'Подметил'
-            'Кукарекнул'
+            'Подметил',
+            'Кукарекнул',
             'Вякнул',
             'Спизданул, не подумавши,',
             'Пукнул',
@@ -282,20 +282,14 @@ class daily_pidor:
                     if event.user_id == self.pidor:
                         ctime = datetime.datetime.now()
                         if (ctime - self.time).total_seconds() > 30 * 60:
-                            self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.pidor) + '(' + self.name + ').',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             self.time = datetime.datetime.now()
+                            self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.pidor) + '(' + self.name + ').',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                         if self.itime.day != self.itime.day:
                             if ctime.hour > 20:
                                 self.init()
                     if event.user_id in self.gparms['chat_admins']:
                         if event.text.lower() == 'карбот сменщик':
                                 self.init()
-
-
-
-
-
-
 
 
 
@@ -1034,9 +1028,9 @@ class sorbetoban:
                                     self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                                 else:
                                     self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
-                                    self.core.send_message('Всегда на страже сорбетопорядка, @id' + str(event.user_id) + '(' + self.name + ')!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + '), сегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             elif event.user_id == 373593096:
-                                self.core.send_message('Андрюша, а тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                self.core.send_message('Андрюша, ну ты же и так знаешь, что тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
                                 self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             '''
