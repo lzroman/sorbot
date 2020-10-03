@@ -1033,7 +1033,8 @@ class sorbetoban:
                                 if event.user_id == self.gparms['chat_admins'][0]:
                                     self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                                 else:
-                                    self.core.send_message('Всегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
+                                    self.core.send_message('Всегда на страже сорбетопорядка, @id' + str(event.user_id) + '(' + self.name + ')!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             elif event.user_id == 373593096:
                                 self.core.send_message('Андрюша, а тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
