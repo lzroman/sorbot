@@ -1028,7 +1028,7 @@ class sorbetoban:
                                     self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                                 else:
                                     self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
-                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + '), сегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') всегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             elif event.user_id == 373593096:
                                 self.core.send_message('Андрюша, ну ты же и так знаешь, что тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
