@@ -205,6 +205,95 @@ class template:
 
 
 
+class daily_pidor:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+        self.pidor = 0
+        self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
+        self.itime = datetime.datetime.now()
+        self.name = ''
+        self.init()
+        self.words = [
+            [
+            'Сказал',
+            'Подметил'
+            'Кукарекнул'
+            'Вякнул',
+            'Спизданул, не подумавши',
+            'Пукнул',
+            'Высрал',
+            'Пиздобрякнул',
+            'Выебнулся',
+            'Промямлил',
+            'Хуйнул',
+            'Жидко пёрнул'
+            ],
+            [
+            'пидор',
+            'пидорас',
+            'хуесос',
+            'спермоглот',
+            'хуепутало',
+            'ебанат',
+            'членосос',
+            'заднеприводный',
+            'очкоприёмник',
+            'жополаз',
+            'властелин коричневой бездны',
+            'dungeon master',
+            'гомосексуалист'
+            ]
+        ]
+
+    def achievements(self):
+        return {'ach':{'text':'','img':'','desc':'','params':{'state':False}}}
+
+    def actions(self):
+        return [self.action]
+
+    def stats(self):
+        return {'stat':{'text':'','params':{'value':0}}}
+
+    def help(self):
+        return []
+    
+    def init(self):
+        print('init daily_pidor')
+        ulist =  self.core.vk_session.method('messages.getChat',{'chat_id' : self.gparms['chat_id'], 'fields': 'users'})['users']
+        for u in ulist:
+            if u['id'] == 379124050:
+                ulist.remove(u)
+                print('bot removed')
+        self.pidor = random.choice(ulist)['id']
+        self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
+        print('pidor is ', self.name, ' ', str(self.pidor))
+        self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=self.gparms['chat_id'])
+        self.itime = datetime.datetime.now()
+        self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
+
+    def action(self, event):
+        time = datetime.datetime.now()
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    if event.user_id == self.pidor:
+                        ctime = datetime.datetime.now()
+                        if (ctime - self.time).total_seconds() > 30 * 60:
+                            self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.pidor) + '(' + self.name + ').',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            self.time = datetime.datetime.now()
+                        if self.itime.day != self.itime.day:
+                            if ctime.hour > 20:
+                                self.init()
+                    if event.user_id in self.gparms['chat_admins']:
+                        if event.text.lower() == 'карбот сменщик':
+                                self.init()
+
+
+
+
+
+
 
 
 
