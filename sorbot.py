@@ -213,7 +213,7 @@ class daily_pidor:
         self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
         self.itime = datetime.datetime.now()
         self.name = ''
-        self.init()
+        self.init(silent=True)
         self.words = [
             [
             'Сказал',
@@ -252,15 +252,15 @@ class daily_pidor:
         return {}
 
     def actions(self):
-        return [self.action]
+        return [self.action, self.whois]
 
     def stats(self):
         return {}
 
     def help(self):
-        return []
+        return ['Каждый день избирается пидор дня, на которого бот должным образом реагирует. Узнать героя - "карбот пидор" или "карбот герой"']
     
-    def init(self):
+    def init(self, silent=False):
         print('init daily_pidor')
         ulist =  self.core.vk_session.method('messages.getChat',{'chat_id' : self.gparms['chat_id'], 'fields': 'users'})['users']
         for u in ulist:
@@ -270,7 +270,8 @@ class daily_pidor:
         self.pidor = random.choice(ulist)['id']
         self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
         print('pidor is ', self.name, ' ', str(self.pidor))
-        self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=self.gparms['chat_id'])
+        if not silent:
+            self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=self.gparms['chat_id'])
         self.itime = datetime.datetime.now()
         self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
 
@@ -287,9 +288,58 @@ class daily_pidor:
                         if self.itime.day != self.itime.day:
                             if ctime.hour > 20:
                                 self.init()
+
+    def whois(self, event):
+        if event.type == VkEventType.MESSAGE_NEW:
+            if event.from_chat:
+                if event.chat_id == self.gparms['chat_id']:
+                    if event.text.lower() == 'карбот пидор' or event.text.lower() == 'карбот герой':
+                        self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
+                        self.core.send_message('Сегодняшний пидор - @id' + str(self.pidor) + '(' + self.name + ').',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                     if event.user_id in self.gparms['chat_admins']:
-                        if event.text.lower() == 'карбот сменщик':
+                        words = event.text.lower().split()
+                        if words[0] == 'карбот' and words[1] == 'сменщик':
+                            if len(words) == 2:
                                 self.init()
+                            elif words[2] == 'тихо':
+                                self.init(silent=True)
+                            else:
+                                print(words)
+                                if words[2][0] == '[':
+                                    npos = words[2].find('|')
+                                    print(npos)
+                                    if npos != -1:
+                                        try:
+                                            ans = self.core.vk_session.method('utils.resolveScreenName', {'screen_name' : words[2][1:npos]})
+                                        except Exception as e:
+                                            print(''.join(['fail: ', e]))
+                                        print(ans)
+                                        if len(ans):
+                                            if ans['type'] == 'user':
+                                                uid = self.core.vk_session.method('users.get',{'user_id' : [int(words[2][3:npos])]})[0]['id']
+                                                print(uid)
+                                                if words[-1] == 'тихо':
+                                                    self.forceinit(uid, silent=True)
+                                                else:
+                                                    self.forceinit(uid)
+
+
+
+    def forceinit(self, uid, silent=False):
+        ulist =  self.core.vk_session.method('messages.getChat',{'chat_id' : self.gparms['chat_id'], 'fields': 'users'})['users']
+        uids = [user['id'] for user in ulist]
+        if uid in uids:
+            self.itime = datetime.datetime.now()
+            self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
+            self.pidor = uid
+            self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
+            print('pidor is ', self.name, ' ', str(self.pidor))
+            if not silent:
+                self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=self.gparms['chat_id'])
+                
+
+
+
 
 
 
@@ -854,7 +904,7 @@ class ban_new_user:
         if event.type_id == 6 and event.chat_id == self.gparms['chat_id']:
             print('user added: ', event.info['user_id'])
             self.newfags.append(self.newfag(self.core, self.gparms, event.info['user_id'], int(time.time())))
-            self.core.send_message('@id' + str(event.info['user_id']) + '(' + self.core.vk_session.method('users.get',{'user_id' : event.info['user_id']})[0]['first_name'] + '), добро пожаловать в беседу каркула!\nНе забудьте отписаться, чтобы мы удостоверились, что вы не бот, и не забанили вас.',chat_id=self.gparms['chat_id'])
+            self.core.send_message('@id' + str(event.info['user_id']) + '(' + self.core.vk_session.method('users.get',{'user_id' : event.info['user_id']})[0]['first_name'] + '), добро пожаловать в беседу каркула!\nНе забудьте отправить сообщению в беседу, чтобы мы удостоверились, что вы не бот, и не забанили вас.',chat_id=self.gparms['chat_id'])
         
         elif (event.type_id == 8 or event.type_id == 7) and event.chat_id == self.gparms['chat_id']:
             print('user gone0: ', event.info['user_id'])
@@ -928,7 +978,7 @@ class ruletka:
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
                     if event.chat_id == self.gparms['chat_id']:
-                        if event.text.lower() == 'стреляй':
+                        if event.text.lower().find('стреляй') != -1:
                             uname = str(event.user_id)
                             self.gparms['is_ach_on_user']('first_ruletka',uname)
                             self.gparms['achievements'][uname]['first_ruletka']['count'] += 1
@@ -946,7 +996,7 @@ class ruletka:
         if event.type == VkEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.chat_id == self.gparms['chat_id']:
-                    if event.text.lower() == 'карбот рулетка':
+                    if event.text.lower().find('карбот рулетка') != -1:
                         uname = str(event.user_id)
                         self.gparms['is_ach_on_user']('first_ruletka_call',uname)
                         self.gparms['achievements'][uname]['first_ruletka_call']['count'] += 1
@@ -958,7 +1008,9 @@ class ruletka:
                             self.core.send_message('Рулетка сейчас активна!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
                         else:
                             self.ruletka_is = True
-                            self.core.send_message('Начинаем карательную рулетку!\nЧтобы участвовать в ней, напишите "стреляй".\nУ вас есть 30 секунд для участия.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
+                            self.ruletka_list.append(event.user_id)
+                            name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
+                            self.core.send_message('Начинаем карательную рулетку!\nЧтобы участвовать в ней, напишите "стреляй".\nУ вас есть 30 секунд для участия.\n@id' + str(event.user_id) + '(' + name + '), принято!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
                             time.sleep(10)
                             self.core.send_message('Осталось 20 секунд.',chat_id=self.gparms['chat_id'], delay = 0)
                             time.sleep(10)
