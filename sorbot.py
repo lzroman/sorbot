@@ -978,19 +978,20 @@ class ruletka:
             if event.type == VkEventType.MESSAGE_NEW:
                 if event.from_chat:
                     if event.chat_id == self.gparms['chat_id']:
-                        if event.text.lower().find('стреляй') != -1:
-                            uname = str(event.user_id)
-                            self.gparms['is_ach_on_user']('first_ruletka',uname)
-                            self.gparms['achievements'][uname]['first_ruletka']['count'] += 1
-                            if self.gparms['achievements'][uname]['first_ruletka']['count'] == 1:
-                                self.gparms['achieve']('first_ruletka',uname)
-                            self.gparms['is_stat_on_user']('ruletka_shoot',uname)
-                            self.gparms['stats'][uname]['ruletka_shoot']['value'] = self.gparms['achievements'][uname]['first_ruletka']['count']
-                            if event.user_id in self.ruletka_list:
-                                self.core.send_message('Вы уже в игре!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
-                            else:
-                                self.ruletka_list.append(event.user_id)
-                                self.core.send_message('Принято!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
+                        if event.user_id != 379124050:
+                            if event.text.lower().find('стреляй') != -1:
+                                uname = str(event.user_id)
+                                self.gparms['is_ach_on_user']('first_ruletka',uname)
+                                self.gparms['achievements'][uname]['first_ruletka']['count'] += 1
+                                if self.gparms['achievements'][uname]['first_ruletka']['count'] == 1:
+                                    self.gparms['achieve']('first_ruletka',uname)
+                                self.gparms['is_stat_on_user']('ruletka_shoot',uname)
+                                self.gparms['stats'][uname]['ruletka_shoot']['value'] = self.gparms['achievements'][uname]['first_ruletka']['count']
+                                if event.user_id in self.ruletka_list:
+                                    self.core.send_message('Вы уже в игре!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
+                                else:
+                                    self.ruletka_list.append(event.user_id)
+                                    self.core.send_message('Принято!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
     
     def ruletka(self, event):
         if event.type == VkEventType.MESSAGE_NEW:
