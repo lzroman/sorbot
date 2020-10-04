@@ -997,46 +997,47 @@ class ruletka:
         if event.type == VkEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.chat_id == self.gparms['chat_id']:
-                    if event.text.lower().find('карбот рулетка') != -1:
-                        uname = str(event.user_id)
-                        self.gparms['is_ach_on_user']('first_ruletka_call',uname)
-                        self.gparms['achievements'][uname]['first_ruletka_call']['count'] += 1
-                        if self.gparms['achievements'][uname]['first_ruletka_call']['count'] == 1:
-                            self.gparms['achieve']('first_ruletka_call',uname)
-                        self.gparms['is_stat_on_user']('ruletka_start',uname)
-                        self.gparms['stats'][uname]['ruletka_start']['value'] = self.gparms['achievements'][uname]['first_ruletka_call']['count']
-                        if self.ruletka_is:
-                            self.core.send_message('Рулетка сейчас активна!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
-                        else:
-                            self.ruletka_is = True
-                            self.ruletka_list.append(event.user_id)
-                            name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
-                            self.core.send_message('Начинаем карательную рулетку!\nЧтобы участвовать в ней, напишите "стреляй".\nУ вас есть 30 секунд для участия.\n@id' + str(event.user_id) + '(' + name + '), принято!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
-                            time.sleep(10)
-                            self.core.send_message('Осталось 20 секунд.',chat_id=self.gparms['chat_id'], delay = 0)
-                            time.sleep(10)
-                            self.core.send_message('Осталось 10 секунд.',chat_id=self.gparms['chat_id'], delay = 0)
-                            time.sleep(5)
-                            self.core.send_message('5',chat_id=self.gparms['chat_id'], delay = 0)
-                            time.sleep(5)
-                            self.ruletka_is = False
-                            self.core.send_message('И победителем становится…',chat_id=self.gparms['chat_id'], delay = 0)
-                            if len(self.ruletka_list) > 1:
-                                uid = random.choice(self.ruletka_list)
-                                name = self.core.vk_session.method('users.get',{'user_id' : uid})[0]['first_name']
-                                self.core.send_message('@id' + str(uid) + '(' + name + '), вы пидор!',chat_id=self.gparms['chat_id'])
-                                uname = str(uid)
-                                self.gparms['is_ach_on_user']('first_ruletka_pidor',uname)
-                                self.gparms['achievements'][uname]['first_ruletka_pidor']['count'] += 1
-                                if self.gparms['achievements'][uname]['first_ruletka_pidor']['count'] == 1:
-                                    self.gparms['achieve']('first_ruletka_pidor',uname)
-                                self.gparms['is_stat_on_user']('ruletka_win',uname)
-                                self.gparms['stats'][uname]['ruletka_win']['value'] = self.gparms['achievements'][uname]['first_ruletka_pidor']['count']
-                            else:                        
-                                self.core.send_message('Недостаточно игроков!',chat_id=self.gparms['chat_id'])
-                                self.gparms['is_ach_on_user']('odin_strel',uname)
-                                self.gparms['achieve']('odin_strel',uname)
-                            self.ruletka_list.clear()
+                    if event.user_id != 379124050:
+                        if event.text.lower().find('карбот рулетка') != -1:
+                            uname = str(event.user_id)
+                            self.gparms['is_ach_on_user']('first_ruletka_call',uname)
+                            self.gparms['achievements'][uname]['first_ruletka_call']['count'] += 1
+                            if self.gparms['achievements'][uname]['first_ruletka_call']['count'] == 1:
+                                self.gparms['achieve']('first_ruletka_call',uname)
+                            self.gparms['is_stat_on_user']('ruletka_start',uname)
+                            self.gparms['stats'][uname]['ruletka_start']['value'] = self.gparms['achievements'][uname]['first_ruletka_call']['count']
+                            if self.ruletka_is:
+                                self.core.send_message('Рулетка сейчас активна!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
+                            else:
+                                self.ruletka_is = True
+                                self.ruletka_list.append(event.user_id)
+                                name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
+                                self.core.send_message('Начинаем карательную рулетку!\nЧтобы участвовать в ней, напишите "стреляй".\nУ вас есть 30 секунд для участия.\n@id' + str(event.user_id) + '(' + name + '), принято!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id, delay = 2)
+                                time.sleep(10)
+                                self.core.send_message('Осталось 20 секунд.',chat_id=self.gparms['chat_id'], delay = 0)
+                                time.sleep(10)
+                                self.core.send_message('Осталось 10 секунд.',chat_id=self.gparms['chat_id'], delay = 0)
+                                time.sleep(5)
+                                self.core.send_message('5',chat_id=self.gparms['chat_id'], delay = 0)
+                                time.sleep(5)
+                                self.ruletka_is = False
+                                self.core.send_message('И победителем становится…',chat_id=self.gparms['chat_id'], delay = 0)
+                                if len(self.ruletka_list) > 1:
+                                    uid = random.choice(self.ruletka_list)
+                                    name = self.core.vk_session.method('users.get',{'user_id' : uid})[0]['first_name']
+                                    self.core.send_message('@id' + str(uid) + '(' + name + '), вы пидор!',chat_id=self.gparms['chat_id'])
+                                    uname = str(uid)
+                                    self.gparms['is_ach_on_user']('first_ruletka_pidor',uname)
+                                    self.gparms['achievements'][uname]['first_ruletka_pidor']['count'] += 1
+                                    if self.gparms['achievements'][uname]['first_ruletka_pidor']['count'] == 1:
+                                        self.gparms['achieve']('first_ruletka_pidor',uname)
+                                    self.gparms['is_stat_on_user']('ruletka_win',uname)
+                                    self.gparms['stats'][uname]['ruletka_win']['value'] = self.gparms['achievements'][uname]['first_ruletka_pidor']['count']
+                                else:                        
+                                    self.core.send_message('Недостаточно игроков!',chat_id=self.gparms['chat_id'])
+                                    self.gparms['is_ach_on_user']('odin_strel',uname)
+                                    self.gparms['achieve']('odin_strel',uname)
+                                self.ruletka_list.clear()
 
     def help(self):
         return ['Команда "карбот рулетка" запускает рулетку, попробуйте!', 'Команда "стреляй" при запущенной рулетке из предыдущего пункта делает Вас её участником']
