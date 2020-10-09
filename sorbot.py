@@ -280,14 +280,14 @@ class daily_pidor:
         if event.type == VkEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.chat_id == self.gparms['chat_id']:
+                    ctime = datetime.datetime.now()
                     if event.user_id == self.pidor:
-                        ctime = datetime.datetime.now()
                         if (ctime - self.time).total_seconds() > 30 * 60:
                             self.time = datetime.datetime.now()
                             self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.pidor) + '(' + self.name + ').',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                        if self.itime.day != self.itime.day:
-                            if ctime.hour > 20:
-                                self.init()
+                    if self.itime.day != ctime.day:
+                        if ctime.hour > 19:
+                            self.init()
 
     def whois(self, event):
         if event.type == VkEventType.MESSAGE_NEW:
