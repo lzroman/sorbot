@@ -205,6 +205,198 @@ class template:
 
 
 
+
+
+
+
+
+class huy:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+        self.starttime = datetime.datetime(2020,5,5)
+        self.is_running = False
+        self.timeout = 2
+        self.bigtimeout = 10
+        self.glas_y = 'еёюя'
+        self.glas = 'аиоуыэ'
+        self.sogl_zv = 'сзж'
+        self.sogl = 'бвгдзклмнпрстфхжцшщчй'
+
+    def achievements(self):
+        #return {'first_huy':{'text':'ХуйНя!','desc':'Первая игра в карательную рулетку','params':{'state':False,'count':0}}}
+        return {}
+
+    def actions(self):
+        return [self.action]
+    
+    def action(self, event):
+        time = datetime.datetime.now()
+        if event.type == VkEventType.MESSAGE_NEW:
+            if len(event.text):
+                if event.from_chat:
+                    if event.chat_id == self.gparms['chat_id']:
+                        if event.user_id != 379124050:
+                            ctime = datetime.datetime.now()
+                            if self.is_running and ((ctime - self.starttime).total_seconds() < self.timeout * 60):
+                                if event.text.lower() == "карбот стопхуй" or event.text.lower() == "карбот стопчлен":
+                                    self.is_running = False
+                                    self.core.send_message('Хорошо, больше никаких хуёв.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                else:
+                                    text = self.makehui(event.text)
+                                    if text:
+                                        self.core.send_message(text,chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            elif event.text.lower() == "карбот хуй" or event.text.lower() == "карбот член":
+                                answer = self.core.vk_session.method('messages.getById',{'message_ids' : event.message_id})['items'][0]
+                                if 'reply_message' in answer.keys() or len(answer['fwd_messages']):
+                                    text = self.parsefwd(answer)
+                                    if text:
+                                        self.core.send_message(text,chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                else:
+                                    if (ctime - self.starttime).total_seconds() < self.bigtimeout * 60:
+                                        self.core.send_message('Слишком рано, упырьте мел.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    else:
+                                        self.core.send_message('Понеслась.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                        self.starttime = datetime.datetime.now()
+                                        self.is_running = True
+
+
+    def parsefwd(self, obj):
+        ans = ''
+        if 'reply_message' in obj.keys():
+            ans += self.parsefwd_in(obj['reply_message']) + '\n'
+        if 'fwd_messages' in obj.keys():
+            for subobj in obj['fwd_messages']:
+                ans += self.parsefwd_in(subobj) + '\n'
+        return ans
+
+    def parsefwd_in(self, obj):
+        ans = ''
+        if 'reply_message' in obj.keys():
+            ans += self.parsefwd_in(obj['reply_message']) + '\n'
+        if 'fwd_messages' in obj.keys():
+            for subobj in obj['fwd_messages']:
+                ans += self.parsefwd_in(subobj) + '\n'
+        if 'text' in obj.keys():
+            if len(obj['text']) > 0:
+                ans += self.makehui(obj['text']) + '\n'
+        return ans
+
+    def makehui(self, msg):
+        if len(msg):
+            text = ''
+            words = msg.lower().split()
+            for word in words:
+                text += self.makehuy(word) + ' '
+            return text
+
+    def makehuy(self, word):
+        text = ''
+        if word[0] in self.glas_y:
+            text = 'ху' + word
+        if word[0] in self.sogl_zv:
+            text = 'хуе' + word
+        gas = self.is_glas_and_sogl(word)
+        if gas:
+            if word[gas] in self.glas_y:
+                text = 'ху' + word[gas:]
+            text = 'ху' + self.yeti(word[gas-1]) + word[gas:]
+        sagas = self.is_sogl_and_glas_and_sogl(word)
+        say = self.is_sogl_and_y(word)
+        if say:
+
+            text = 'ху' + word[say:]
+        else:
+            sagas = self.is_sogl_and_glas_and_sogl(word)
+            if sagas:
+                if word[sagas] in self.glas_y:
+                    text = 'ху' + word[sagas:]
+                text = 'ху' + self.yeti(word[sagas-1]) + word[sagas:]
+            if self.is_all_sogl(word):
+                text = 'ху'+ word
+        if self.is_all_glas(word):
+            text = 'хуе'+ self.yeti(word[0]) + word[1:]
+
+        if not len(text):
+            text = word
+        return text
+        
+
+    def is_glas_and_sogl(self, word):
+        wordlen = len(word)
+        i = 0
+        while i < wordlen and word[i] in self.glas:
+            i += 1
+        if not i or i == wordlen:
+            return False
+        if word[i] in self.sogl or word[i] in self.glas_y:
+            return i
+        return 0
+        
+    def yeti(self, glas):
+        if glas == 'а':
+            return 'я'
+        if glas == 'и' or glas == 'ы':
+            return 'и'
+        if glas == 'о':
+            return 'ё'
+        if glas == 'у':
+            return 'ю'
+        if glas == 'э':
+            return 'е'
+
+    def is_sogl_and_y(self, word):
+        wordlen = len(word)
+        i = 0
+        while i < wordlen and word[i] in self.sogl:
+            i += 1
+        if not i or i == wordlen :
+            return 0
+        if word[i] in self.glas_y:
+            return i
+        return 0
+
+    def is_sogl_and_glas_and_sogl(self, word):
+        wordlen = len(word)
+        i = 0
+        while i < wordlen and word[i] in self.sogl:
+            i += 1
+        while i < wordlen and word[i] in self.glas:
+            i += 1
+        if not i or i == wordlen :
+            return 0
+        if word[i] in self.sogl or word[i] in self.glas_y:
+            return i
+        return 0
+
+    def is_all_glas(self, word):
+        is_all = True
+        for b in word:
+            if b not in self.glas:
+                is_all = False
+                break
+        return is_all
+
+    def is_all_sogl(self, word):
+        is_all = True
+        for b in word:
+            if b not in self.sogl and b not in self.glas_y:
+                is_all = False
+                break
+        return is_all
+
+
+    def stats(self):
+        return {}
+
+    def help(self):
+        return [' По командам "карбот хуй" и "карбот член" хуефицирует прикреплённое сообщение или, если прикрепа нет, начнёт массовую хуификацию сообщений']
+
+
+
+
+
+
 class daily_pidor:
     def __init__(self, core, gparms):
         self.core = core
