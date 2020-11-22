@@ -1276,7 +1276,7 @@ class sorbetoban:
                                 self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
                                 self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             if event.user_id == 373593096:
-                                self.core.send_message('Андрюша,и тебе Тимошу!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                self.core.send_message('Андрюша, и тебе Тимошу!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
                                 self.core.send_message('И тебе сорбет!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
 
