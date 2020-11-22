@@ -1271,8 +1271,10 @@ class sorbetoban:
                                 self.gparms['achieve']('5_bans',uname)
                             self.gparms['is_stat_on_user']('sorbetoban',uname)
                             self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
+                            print(self.gparms['chat_admins'])
                             if event.user_id in self.gparms['chat_admins']:
-                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
+                                self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             if event.user_id == 373593096:
                                 self.core.send_message('Андрюша,и тебе Тимошу!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
