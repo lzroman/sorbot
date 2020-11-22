@@ -294,28 +294,30 @@ class huy:
         text = ''
         if word[0] in self.glas_y:
             text = 'ху' + word
-        if word[0] in self.sogl_zv:
+        elif word[0] in self.sogl_zv:
             text = 'хуе' + word
-        gas = self.is_glas_and_sogl(word)
-        if gas:
-            if word[gas] in self.glas_y:
-                text = 'ху' + word[gas:]
-            text = 'ху' + self.yeti(word[gas-1]) + word[gas:]
-        sagas = self.is_sogl_and_glas_and_sogl(word)
-        say = self.is_sogl_and_y(word)
-        if say:
-
-            text = 'ху' + word[say:]
         else:
-            sagas = self.is_sogl_and_glas_and_sogl(word)
-            if sagas:
-                if word[sagas] in self.glas_y:
-                    text = 'ху' + word[sagas:]
-                text = 'ху' + self.yeti(word[sagas-1]) + word[sagas:]
-            if self.is_all_sogl(word):
-                text = 'ху'+ word
-        if self.is_all_glas(word):
-            text = 'хуе'+ self.yeti(word[0]) + word[1:]
+            gas = self.is_glas_and_sogl(word)
+            if gas:
+                if word[gas] in self.glas_y:
+                    text = 'ху' + word[gas:]
+                text = 'ху' + self.yeti(word[gas-1]) + word[gas:]
+            else:
+                sagas = self.is_sogl_and_glas_and_sogl(word)
+                say = self.is_sogl_and_y(word)
+                if say:
+
+                    text = 'ху' + word[say:]
+                else:
+                    sagas = self.is_sogl_and_glas_and_sogl(word)
+                    if sagas:
+                        if word[sagas] in self.glas_y:
+                            text = 'ху' + word[sagas:]
+                        text = 'ху' + self.yeti(word[sagas-1]) + word[sagas:]
+                    elif self.is_all_sogl(word):
+                        text = 'ху'+ word
+                    elif self.is_all_glas(word):
+                        text = 'хуе'+ self.yeti(word[0]) + word[1:]
 
         if not len(text):
             text = word
@@ -1096,7 +1098,7 @@ class ban_new_user:
         if event.type_id == 6 and event.chat_id == self.gparms['chat_id']:
             print('user added: ', event.info['user_id'])
             self.newfags.append(self.newfag(self.core, self.gparms, event.info['user_id'], int(time.time())))
-            self.core.send_message('@id' + str(event.info['user_id']) + '(' + self.core.vk_session.method('users.get',{'user_id' : event.info['user_id']})[0]['first_name'] + '), добро пожаловать в беседу каркула!\nНе забудьте отправить сообщению в беседу, чтобы мы удостоверились, что вы не бот, и не забанили вас.',chat_id=self.gparms['chat_id'])
+            self.core.send_message('@id' + str(event.info['user_id']) + '(' + self.core.vk_session.method('users.get',{'user_id' : event.info['user_id']})[0]['first_name'] + '), добро пожаловать в беседу!\nНе забудьте отправить сообщению в беседу, чтобы мы удостоверились, что вы не бот, и не забанили вас.',chat_id=self.gparms['chat_id'])
         
         elif (event.type_id == 8 or event.type_id == 7) and event.chat_id == self.gparms['chat_id']:
             print('user gone0: ', event.info['user_id'])
@@ -1118,7 +1120,7 @@ class ban_new_user:
                             if newfag.zerosent:
                                 newfag.id = 0
                                 print('user ready: ', event.user_id)
-                                self.core.send_message('Теперь вы - полноценный гвардеец @smayanezikom (Карательной кулинарии), поздравляем!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                self.core.send_message('Добро пожаловать в беседу!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
                                 print('user not newfag: ', event.user_id)
                                 newfag.zerosent = True
@@ -1270,22 +1272,11 @@ class sorbetoban:
                             self.gparms['is_stat_on_user']('sorbetoban',uname)
                             self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
                             if event.user_id in self.gparms['chat_admins']:
-                                if event.user_id == self.gparms['chat_admins'][0]:
-                                    self.core.send_message('Привет, Кеса! Хвала Священному Сорбету!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                                else:
-                                    self.name = self.core.vk_session.method('users.get',{'user_id' : event.user_id})[0]['first_name']
-                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') всегда на страже сорбетопорядка!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                            elif event.user_id == 373593096:
-                                self.core.send_message('Андрюша, ну ты же и так знаешь, что тебе не бан.',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                                    self.core.send_message('@id' + str(event.user_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
+                            if event.user_id == 373593096:
+                                self.core.send_message('Андрюша,и тебе Тимошу!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
                             else:
-                                self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                            '''
-                            else:
-                                if event.user_id in [277183894,174005550]:
-                                    self.core.send_message('Благодарим за помощь в становлении сорбетной гвардии!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                                else:
-                                    self.core.send_message('Бан!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
-                            '''
+                                self.core.send_message('И тебе сорбет!',chat_id=self.gparms['chat_id'],forward_messages=event.message_id)
 
     def word_prepare(self):
         self.word_letters = []
