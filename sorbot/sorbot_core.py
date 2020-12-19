@@ -19,8 +19,6 @@ class sorbot_core:
     def __init__(self, token):
         self._app_id = "2685278"
         self._vk_client_secret = "hHbJug59sKJie78wjrH8"
-        #self.vk_session = vk_api.VkApi(token=token, app_id=self._app_id, client_secret=self._vk_client_secret)
-        #self.vk_session_a = vk_api.VkApi('380988588015', 'fishglory')
         self.vk_session = vk_api.VkApi(token=token)
         self.vk = self.vk_session.get_api()
         self.upload = vk_api.VkUpload(self.vk_session)
