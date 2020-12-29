@@ -24,6 +24,7 @@ import json
 class sorbot:
     def __init__(self, token, bot_id, botname, admin_ids):
         self.core = sorbot_core(token)
+        print(self.core.vk_session.method('messages.getConversations',{'count' : 10}))
         self.bot_id = bot_id
         self.admin_ids = admin_ids
         self.botname = botname.lower()
@@ -32,7 +33,12 @@ class sorbot:
         self.actions = []
         self.threads = []
         self.admin_list = []
+        self.chats_conf = []
+        self.chats = {}#{'plugins': [], 'plugins_run': [], 'actions': [], 'threads': []}
         #self.get_admins()
+        '''with open('chat_conf.json', 'r') as f:
+            chat_file = json.load(f)
+            self.chats_conf = chat_file.copy()'''
         self.gparms = {'bot_id': self.bot_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}, 'help': [], 'help_t': ''}
         self.gparms['is_ach_on_user'] = self.is_ach_on_user
         self.gparms['achieve'] = self.achieve
@@ -81,7 +87,7 @@ class sorbot:
 
     def start_internal(self):
         for plugin in self.plugins:
-            self.plugins_run.append(plugin(self.core, self.gparms))            
+            self.plugins_run.append(plugin(self.core, self.gparms))
         for plugin in self.plugins_run:
             newach = plugin.achievements()
             for ach in newach:
@@ -100,26 +106,10 @@ class sorbot:
         with open('achievements.json', 'r') as f:
             ach_file = json.load(f)
             self.gparms['achievements'] = ach_file.copy()
-            '''
-            for user in ach_file:
-                self.gparms['achievements'][user] = {}
-                for ach in ach_file[user]:
-                    self.gparms['achievements'][user][ach] = {}
-                    for par in ach_file[user][ach]:
-                        self.gparms['achievements'][user][ach] = ach_file[user][ach].copy()
-                        '''
 
         with open('stats.json', 'r') as f:
             stats_file = json.load(f)
             self.gparms['stats'] = stats_file.copy()
-            '''
-            for user in stats_file:
-                self.gparms['stats'][user] = {}
-                for stat in stats_file[user]:
-                    self.gparms['stats'][user][stat] = {}
-                    for par in stats_file[user][stat]:
-                        self.gparms['stats'][user][stat] = stats_file[user][stat].copy()
-                        '''
         #print(self.gparms['achievements'])
         #print(self.gparms['stats'])
 
@@ -127,13 +117,26 @@ class sorbot:
         while True:
             events = self.core.getevents()
             for event in events:
-                for action in self.actions:
-                    self.threads.append(Thread(target=self.execute_action,args=(action,event)))
-                    self.threads[-1].start()
-            for thread in self.threads:
-                if not thread.is_alive():
-                    self.threads.remove(thread)
+                if event.from_chat:
+                    if event.chat_id not in self.chats.keys():
+                        self.chats[event.chat_id] = self.newchat(event.chat_id).copy()
+                    for action in self.chats[event.chat_id]['actions']:
+                        self.chats[event.chat_id]['threads'].append(Thread(target=self.execute_action,args=(action,event)))
+                        self.chats[event.chat_id]['threads'][-1].start()
+            for chat in self.chats.keys():
+                for thread in self.chats[chat]['threads']:
+                    if not thread.is_alive():
+                        self.chats[chat]['threads'].remove(thread)
             events.clear()
+
+    def newchat(self, chat_id):
+        chatobj = {'plugins_run': [], 'actions': [], 'threads': []}
+        for plugin in self.plugins:
+            chatobj['plugins_run'].append(plugin(self.core, self.gparms))
+        for plugin in chatobj['plugins_run']:
+            for action in plugin.actions():
+                chatobj['actions'].append(action)
+        return chatobj
 
     def achieve(self, ach, user):
         self.achieve_thread_onject = Thread(target=self.achieve_thread,args=(ach,str(user)))
@@ -219,7 +222,7 @@ class huy:
         self.is_running = False
         self.timeout = 2
         self.bigtimeout = 10
-        self.glas_y = 'еёюя'
+        self.glas_y = 'еёюяй'
         self.glas = 'аиоуыэ'
         self.sogl_zv = 'сзж'
         self.sogl = 'бвгдзклмнпрстфхжцшщчй'
@@ -232,7 +235,6 @@ class huy:
         return [self.action]
     
     def action(self, event):
-        time = datetime.datetime.now()
         if event.type == VkBotEventType.MESSAGE_NEW:
             if len(event.message.text):
                 if event.from_chat:
@@ -298,16 +300,16 @@ class huy:
         text = ''
         if word[0] in self.glas_y:
             text = 'ху' + word
-        elif word[0] in self.sogl_zv:
-            text = 'хуе' + word
+        # elif word[0] in self.sogl_zv:
+        #     text = 'хуе' + word
         else:
             gas = self.is_glas_and_sogl(word)
             if gas:
                 if word[gas] in self.glas_y:
                     text = 'ху' + word[gas:]
-                text = 'ху' + self.yeti(word[gas-1]) + word[gas:]
+                else:
+                    text = 'ху' + self.yeti(word[gas-1]) + word[gas:]
             else:
-                sagas = self.is_sogl_and_glas_and_sogl(word)
                 say = self.is_sogl_and_y(word)
                 if say:
 
@@ -317,7 +319,8 @@ class huy:
                     if sagas:
                         if word[sagas] in self.glas_y:
                             text = 'ху' + word[sagas:]
-                        text = 'ху' + self.yeti(word[sagas-1]) + word[sagas:]
+                        else:
+                            text = 'ху' + self.yeti(word[sagas-1]) + word[sagas:]
                     elif self.is_all_sogl(word):
                         text = 'ху'+ word
                     elif self.is_all_glas(word):
@@ -808,8 +811,9 @@ class jirniy:
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
 
     def actions(self):
-        return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
-        
+        #return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
+        #return [self.dapizda, self.privet, self.nebuhtet, self.poh, self.vinishko]
+        return [self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
     def stats(self):
         return {}
 
