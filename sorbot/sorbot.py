@@ -39,7 +39,7 @@ class sorbot:
         '''with open('chat_conf.json', 'r') as f:
             chat_file = json.load(f)
             self.chats_conf = chat_file.copy()'''
-        self.gparms = {'bot_id': self.bot_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}, 'help': [], 'help_t': ''}
+        self.gparms = {'bot_id': self.bot_id, 'botname': self.botname, 'chat_admins': self.admin_list, 'achievements': {}, 'achievements_original': {}, 'ach_len': 0, 'stats_original': {}, 'stats': {}, 'help': [], 'help_t': '', 'plugins': {}}
         self.gparms['is_ach_on_user'] = self.is_ach_on_user
         self.gparms['achieve'] = self.achieve
         self.gparms['is_stat_on_user'] = self.is_stat_on_user
@@ -70,6 +70,8 @@ class sorbot:
                     json.dump(self.gparms['achievements'], outfile)
                 with open('stats.json', 'w') as outfile:
                     json.dump(self.gparms['stats'], outfile)
+                with open('plugins.json', 'w') as outfile:
+                    json.dump(self.gparms['plugins'], outfile)
                 break
             if inp == 'f':
                 upload = self.core.upload.photo_messages('bye.jpg')[0]
@@ -83,6 +85,8 @@ class sorbot:
                 json.dump(self.gparms['achievements'], outfile)
             with open('stats.json', 'w') as outfile:
                 json.dump(self.gparms['stats'], outfile)
+            with open('plugins.json', 'w') as outfile:
+                json.dump(self.gparms['plugins'], outfile)
             time.sleep(600)
 
     def start_internal(self):
@@ -110,6 +114,10 @@ class sorbot:
         with open('stats.json', 'r') as f:
             stats_file = json.load(f)
             self.gparms['stats'] = stats_file.copy()
+        with open('plugins.json', 'r') as f:
+            plugins_file = json.load(f)
+            self.gparms['plugins'] = plugins_file.copy()
+        print(self.gparms['plugins'])
         #print(self.gparms['achievements'])
         #print(self.gparms['stats'])
 
@@ -411,10 +419,15 @@ class daily_pidor:
         self.core = core
         self.gparms = gparms
         self.pidor = 0
-        self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
         self.itime = datetime.datetime.now()
-        self.name = ''
-        self.init(silent=True)
+        if 'pidor' not in self.gparms['plugins']:
+            self.gparms['plugins']['pidor'] = {}
+        else:
+            newd = {}
+            for key in self.gparms['plugins']['pidor'].keys():
+                newd[int(key)] = self.gparms['plugins']['pidor'][key]
+            self.gparms['plugins']['pidor'] = newd
+        #self.init(silent=True)
         self.words = [
             [
             'Сказал',
@@ -461,80 +474,97 @@ class daily_pidor:
     def help(self):
         return ['Каждый день избирается пидор дня, на которого бот должным образом реагирует. Узнать героя - "карбот пидор" или "карбот герой"']
     
-    def init(self, silent=False):
+    def init(self, chat_id, silent=False):
         print('init daily_pidor')
-        ulist =  self.core.vk_session.method('messages.getChat',{'chat_id' : event.chat_id, 'fields': 'users'})['users']
-        for u in ulist:
-            if u['id'] == 379124050:
-                ulist.remove(u)
-                print('bot removed')
-        self.pidor = random.choice(ulist)['id']
-        self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
-        print('pidor is ', self.name, ' ', str(self.pidor))
+        ulist =  self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : 2000000000 + chat_id, 'fields': 'users'})['profiles']
+        pidor = random.choice(ulist)['id']
+        self.gparms['plugins']['pidor'][chat_id] = {}
+        self.gparms['plugins']['pidor'][chat_id]['id'] = pidor
+        self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : pidor})[0]['first_name']
+        self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now() - datetime.timedelta(minutes=31)
+        print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(pidor))
         if not silent:
-            self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=event.chat_id)
-        self.itime = datetime.datetime.now()
-        self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
+            self.core.send_message('@id' + str(pidor) + '(' + self.gparms['plugins']['pidor'][chat_id]['name'] + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=chat_id)
+        print('done')
 
     def action(self, event):
         time = datetime.datetime.now()
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
-                ctime = datetime.datetime.now()
-                if event.message.from_id == self.pidor:
-                    if (ctime - self.time).total_seconds() > 30 * 60:
-                        self.time = datetime.datetime.now()
-                        self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.pidor) + '(' + self.name + ').',chat_id=event.chat_id,forward_messages=None)
-                if self.itime.day != ctime.day:
-                    if ctime.hour > 19:
-                        self.init()
+                if event.chat_id in self.gparms['plugins']['pidor']:
+                    ctime = datetime.datetime.now()
+                    if event.message.from_id == self.gparms['plugins']['pidor'][event.chat_id]['id']:
+                        if (ctime - self.gparms['plugins']['pidor'][chat_id]['time']).total_seconds() > 30 * 60:
+                            self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now()
+                            self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
+                    if self.itime.day != ctime.day:
+                        if ctime.hour > 19:
+                            self.init(event.chat_id)
+                    
+                    words = event.message.text.lower().split()
+                    if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'выключи':
+                        self.core.send_message('Функция Пидор дня отключена.',chat_id=event.chat_id,forward_messages=None)
+                else:
+                    words = event.message.text.lower().split()
+                    if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'включи':
+                        self.core.send_message('Функция Пидор дня включена.',chat_id=event.chat_id,forward_messages=None)
+                        self.init(event.chat_id)
+
 
     def whois(self, event):
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
-                if event.message.text.lower() == 'карбот пидор' or event.message.text.lower() == 'карбот герой':
-                    self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
-                    self.core.send_message('Сегодняшний пидор - @id' + str(self.pidor) + '(' + self.name + ').',chat_id=event.chat_id,forward_messages=None)
-                if event.message.from_id in self.gparms['chat_admins']:
+                if event.chat_id in self.gparms['plugins']['pidor'].keys():
+                    if event.message.text.lower() == 'карбот пидор' or event.message.text.lower() == 'карбот герой':
+                        self.gparms['plugins']['pidor'][event.chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.gparms['plugins']['pidor'][event.chat_id]['id']})[0]['first_name']
+                        self.core.send_message('Сегодняшний пидор - @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
+                    #if event.message.from_id in self.gparms['chat_admins']:
                     words = event.message.text.lower().split()
                     if words[0] == 'карбот' and words[1] == 'сменщик':
-                        if len(words) == 2:
-                            self.init()
-                        elif words[2] == 'тихо':
-                            self.init(silent=True)
-                        else:
-                            print(words)
-                            if words[2][0] == '[':
-                                npos = words[2].find('|')
-                                print(npos)
-                                if npos != -1:
-                                    try:
-                                        ans = self.core.vk_session.method('utils.resolveScreenName', {'screen_name' : words[2][1:npos]})
-                                    except Exception as e:
-                                        print(''.join(['fail: ', e]))
-                                    print(ans)
-                                    if len(ans):
-                                        if ans['type'] == 'user':
-                                            uid = self.core.vk_session.method('users.get',{'user_id' : [int(words[2][3:npos])]})[0]['id']
-                                            print(uid)
-                                            if words[-1] == 'тихо':
-                                                self.forceinit(uid, silent=True)
-                                            else:
-                                                self.forceinit(uid)
+                        admin_list = []
+                        ans = self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : event.chat_id + 2000000000})
+                        for user in ans['items']:
+                            if 'is_admin' in user:
+                                if user['is_admin']:
+                                    admin_list.append(user['member_id'])
+                        if event.message.from_id in admin_list:
+                            if len(words) == 2:
+                                self.init(event.chat_id)
+                            elif words[2] == 'тихо':
+                                self.init(event.chat_id, silent=True)
+                            else:
+                                print(words)
+                                if words[2][0] == '[':
+                                    npos = words[2].find('|')
+                                    print(npos)
+                                    if npos != -1:
+                                        try:
+                                            ans = self.core.vk_session.method('utils.resolveScreenName', {'screen_name' : words[2][1:npos]})
+                                        except Exception as e:
+                                            print(''.join(['fail: ', e]))
+                                        print(ans)
+                                        if len(ans):
+                                            if ans['type'] == 'user':
+                                                uid = self.core.vk_session.method('users.get',{'user_id' : [int(words[2][3:npos])]})[0]['id']
+                                                print(uid)
+                                                if words[-1] == 'тихо':
+                                                    self.forceinit(event.chat_id, uid, silent=True)
+                                                else:
+                                                    self.forceinit(event.chat_id, uid)
 
 
 
-    def forceinit(self, uid, silent=False):
-        ulist =  self.core.vk_session.method('messages.getChat',{'chat_id' : event.chat_id, 'fields': 'users'})['users']
+    def forceinit(self, chat_id, uid, silent=False):
+        ulist =  self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : 2000000000 + chat_id, 'fields': 'users'})['profiles']
         uids = [user['id'] for user in ulist]
         if uid in uids:
             self.itime = datetime.datetime.now()
-            self.time = datetime.datetime.now() - datetime.timedelta(minutes=31)
-            self.pidor = uid
-            self.name = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
-            print('pidor is ', self.name, ' ', str(self.pidor))
+            self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now() - datetime.timedelta(minutes=31)
+            self.gparms['plugins']['pidor'][chat_id]['id'] = uid
+            self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
+            print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(self.pidor))
             if not silent:
-                self.core.send_message('@id' + str(self.pidor) + '(' + self.name + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=event.chat_id)
+                self.core.send_message('@id' + str(self.pidor) + '(' + self.gparms['plugins']['pidor'][chat_id]['name'] + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=chat_id)
                 
 
 
@@ -1339,6 +1369,7 @@ class sorbetoban:
                 if event.message.text.find('бот') != -1 or event.message.text.find('Бот') != -1:
                     self.core.send_message('Уебот!',chat_id=self.chat_id,forward_messages=None)
 '''
+
 with open('config.json', 'r') as f:
         conf = json.load(f)
 
