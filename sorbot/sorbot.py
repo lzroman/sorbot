@@ -481,7 +481,7 @@ class daily_pidor:
         self.gparms['plugins']['pidor'][chat_id] = {}
         self.gparms['plugins']['pidor'][chat_id]['id'] = pidor
         self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : pidor})[0]['first_name']
-        self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now() - datetime.timedelta(minutes=31)
+        self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
         print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(pidor))
         if not silent:
             self.core.send_message('@id' + str(pidor) + '(' + self.gparms['plugins']['pidor'][chat_id]['name'] + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=chat_id)
@@ -494,8 +494,8 @@ class daily_pidor:
                 if event.chat_id in self.gparms['plugins']['pidor']:
                     ctime = datetime.datetime.now()
                     if event.message.from_id == self.gparms['plugins']['pidor'][event.chat_id]['id']:
-                        if (ctime - self.gparms['plugins']['pidor'][chat_id]['time']).total_seconds() > 30 * 60:
-                            self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now()
+                        if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
+                            self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
                             self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
                     if self.itime.day != ctime.day:
                         if ctime.hour > 19:
@@ -559,7 +559,7 @@ class daily_pidor:
         uids = [user['id'] for user in ulist]
         if uid in uids:
             self.itime = datetime.datetime.now()
-            self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.now() - datetime.timedelta(minutes=31)
+            self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
             self.gparms['plugins']['pidor'][chat_id]['id'] = uid
             self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.pidor})[0]['first_name']
             print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(self.pidor))
