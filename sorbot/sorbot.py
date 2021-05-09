@@ -951,7 +951,7 @@ class jirniy:
     def dapizda(self, event):
         if self.is_chat(event):
             if event.message.text.lower() == "да":
-                upload = self.core.upload.photo_messages(str(Path('imgs\\da' + str(random.randint(1, 20)) + '.jpg')))[0]
+                upload = self.core.upload.photo_messages(str(Path('imgs/da' + str(random.randint(1, 20)) + '.jpg')))[0]
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                                           
     def korona(self, event):
@@ -969,7 +969,7 @@ class jirniy:
             words = event.message.text.lower().split()
             if len(words) > 3:
                 if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
-                    upload = self.core.upload.photo_messages(str(Path('imgs\\nebuhtet.jpg')))[0]
+                    upload = self.core.upload.photo_messages(str(Path('imgs/nebuhtet.jpg')))[0]
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
     def onfind(self, event):
@@ -979,7 +979,7 @@ class jirniy:
             if el['time'] + 60 * 1 < curtime:
                 for eltext in el['text']:
                     if msgtext.find(eltext) != -1:
-                        upload = self.core.upload.photo_messages(str(Path('imgs\\' + random.choice(el['img']))))[0]
+                        upload = self.core.upload.photo_messages(str(Path('imgs/' + random.choice(el['img']))))[0]
                         self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                         el['time'] =  curtime
                         break
