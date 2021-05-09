@@ -15,7 +15,7 @@ import numpy as np
 import math
 from PIL import Image
 import json
-
+from pathlib import Path
 
 #import discord
 
@@ -844,11 +844,73 @@ class jirniy:
         self.core = core
         self.gparms = gparms
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
+        self.finding = [
+            {
+                'text': ['2 рубл', 'окурок', 'окурк'],
+                'img': ['okurok.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['всем привет'],
+                'img': ['priv.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['всем пока'],
+                'img': ['okurok.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['poka'],
+                'img': ['okurok.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['пидор'],
+                'img': ['pidocat.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['похуй'],
+                'img': ['poh' + str(i) + '.jpg' for i in range(1,7)],
+                'time': 0
+            },
+            {
+                'text': ['питер', 'петербург', 'спб'],
+                'img': ['piter.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['болот'],
+                'img': ['okurok.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['винишк'],
+                'img': ['vinishko.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['русск'],
+                'img': ['russ' + str(i) + '.jpg' for i in range(1,12)],
+                'time': 0
+            },
+            {
+                'text': ['салам'],
+                'img': ['salam.jpg'],
+                'time': 0
+            },
+            {
+                'text': ['котлет'],
+                'img': ['kotlet.jpg'],
+                'time': 0
+            }
+        ]
 
     def actions(self):
         #return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
         #return [self.dapizda, self.privet, self.nebuhtet, self.poh, self.vinishko]
-        return [self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko, self.russ, self.salam, self.kotlet]
+        return [self.dapizda, self.korona, self.zabiv, self.nebuhtet, self.onfind]
     def stats(self):
         return {}
 
@@ -859,8 +921,6 @@ class jirniy:
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
                 return True
-                if event.message.from_id != 379124050:
-                    return event.chat_id == event.chat_id
     
     def cooldown(self, p):
         curtime = int(time.time())
@@ -870,7 +930,7 @@ class jirniy:
         else:
             return False
 
-    
+    '''
     def jirniy(self, event):
         if self.is_chat(event):
             if event.message.text.lower().find('жирн') != -1:
@@ -886,36 +946,14 @@ class jirniy:
                     if self.cooldown('durka'):
                         upload = self.core.upload.photo_messages('d' + str(random.randint(1, 4)) + '.jpg')[0]
                         self.core.vk.messages.send(message='Ты как блять за окно выбрался?', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+    '''
 
-    def okurok(self, event):
-        if self.is_chat(event):
-            if event.message.text.find('2 рубл') != -1 or event.message.text.lower().find('окурок') != -1 or event.message.text.lower().find('окурк') != -1:
-                if self.cooldown('okurok'):
-                    upload = self.core.upload.photo_messages('okurok.jpg')[0]
-                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-                        
     def dapizda(self, event):
         if self.is_chat(event):
             if event.message.text.lower() == "да":
-                upload = self.core.upload.photo_messages('da' + str(random.randint(1, 20)) + '.jpg')[0]
+                upload = self.core.upload.photo_messages(str(Path('imgs\\da' + str(random.randint(1, 20)) + '.jpg')))[0]
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-                                             
-    def privet(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('всем привет') != -1:
-                upload = self.core.upload.photo_messages('priv.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-            if event.message.text.lower().find('всем пока') != -1:
-                upload = self.core.upload.photo_messages('poka.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-    def pidocat(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('пидор') != -1:
-                if self.cooldown('pidocat'):
-                    upload = self.core.upload.photo_messages('pidocat.jpg')[0]
-                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-                                             
+                                          
     def korona(self, event):
         if self.is_chat(event):
             if event.message.text.lower().find('коронавирус') != -1:
@@ -931,50 +969,22 @@ class jirniy:
             words = event.message.text.lower().split()
             if len(words) > 3:
                 if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
-                    upload = self.core.upload.photo_messages('nebuhtet.jpg')[0]
+                    upload = self.core.upload.photo_messages(str(Path('imgs\\nebuhtet.jpg')))[0]
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
-    def poh(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('похуй') != -1:
-                upload = self.core.upload.photo_messages('poh' + str(random.randint(1, 6)) + '.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+    def onfind(self, event):
+        msgtext = event.message.text.lower()
+        for el in self.finding:
+            curtime = int(time.time())
+            if el['time'] + 60 * 1 < curtime:
+                for eltext in el['text']:
+                    if msgtext.find(eltext) != -1:
+                        upload = self.core.upload.photo_messages(str(Path('imgs\\' + random.choice(el['img']))))[0]
+                        self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                        el['time'] =  curtime
+                        break
 
-    def piter(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('питер') != -1 or event.message.text.lower().find('петербург') != -1 or event.message.text.lower().find('спб') != -1:
-                upload = self.core.upload.photo_messages('piter.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
-    def boloto(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('болот') != -1:
-                upload = self.core.upload.photo_messages('boloto.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-    def vinishko(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('винишк') != -1:
-                upload = self.core.upload.photo_messages('vinishko.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-    def russ(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('русск') != -1:
-                upload = self.core.upload.photo_messages('russ' + str(random.randint(1, 11)) + '.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-    def salam(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('салам') != -1:
-                upload = self.core.upload.photo_messages('salam.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-
-    def kotlet(self, event):
-        if self.is_chat(event):
-            if event.message.text.lower().find('котлет') != -1:
-                upload = self.core.upload.photo_messages('kotlet.jpg')[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
     def help(self):
         return ['Бот реагирует картинкой или роликом на некоторые определённые фразы']
