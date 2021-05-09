@@ -23,11 +23,14 @@ import json
 
 class sorbot:
     def __init__(self, token, bot_id, botname, admin_ids):
-        self.core = sorbot_core(token)
+        if 'utoken' in conf.keys():
+            self.core = sorbot_core(conf['token'], conf['utoken'])
+        else:
+            self.core = sorbot_core(conf['token'])
         print(self.core.vk_session.method('messages.getConversations',{'count' : 10}))
-        self.bot_id = bot_id
-        self.admin_ids = admin_ids
-        self.botname = botname.lower()
+        self.bot_id = conf['bot_id']
+        self.admin_ids = conf['admin_ids']
+        self.botname = conf['botname'].lower()
         self.plugins = []
         self.plugins_run = []
         self.actions = []
@@ -46,16 +49,6 @@ class sorbot:
         self.saving_ach_thread = Thread(target=self.saving_ach)
         self.saving_ach_thread.start()
         self.achieve_thread_onject = Thread()
-
-    def get_admins(self):
-        self.admin_list.clear()
-        ans = self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : self.chat_id + 2000000000})
-        for user in ans['items']:
-            if 'is_admin' in user:
-                if user['is_admin']:
-                    self.admin_list.append(user['member_id'])
-        print(self.admin_list)
-
     
     def plugins_add(self, plugin):
         self.plugins.append(plugin)
@@ -605,6 +598,7 @@ class voicetomusic:
         self.core = core
         self.gparms = gparms
         self.attachments = []
+        self.busy = False
 
     def achievements(self):
         return {}
@@ -616,18 +610,23 @@ class voicetomusic:
         return ['Команда "карбот музыка" и прикреплённое сообщение с голосовым сообщением длительностью более 3 секунд вернёт его как аудиозапись']
     
     def action(self, event):
-        if event.type == VkBotEventType.MESSAGE_NEW:
-            if event.from_chat:
-                if event.message.text.lower() == 'карбот музыка':
-                    #print(event.message.conversation_message_id)
-                    answer = self.core.vk_session.method('messages.getById',{'message_ids' : event.message.conversation_message_id})
-                    print(answer)
-                    self.fwd(answer['items'][0])
-                    print(self.attachments)
-                    if self.attachments:
-                        attach_text = ','.join(self.attachments)
-                        self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment=attach_text)
-                    self.attachments.clear()
+        if self.core.uacc:
+            if event.type == VkBotEventType.MESSAGE_NEW:
+                if event.from_chat:
+                    if event.message.text.lower() == 'карбот музыка':
+                        if not self.busy:
+                            self.busy = True
+                            #print(event.message.conversation_message_id)
+                            # answer = self.core.vk_session.method('messages.getById',{'message_ids' : event.message.conversation_message_id})
+                            # print(answer)
+                            self.fwd(event.raw['object']['message'])
+                            if self.attachments:
+                                attach_text = ','.join(self.attachments)
+                                self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment=attach_text)
+                            self.attachments.clear()
+                            self.busy = False
+                        else:
+                            self.core.send_message('Я обрабатываю другие аудиозаписи, попробуйте позже.' ,chat_id=event.chat_id,forward_messages=None)
         
 
     
@@ -643,14 +642,20 @@ class voicetomusic:
             for attachment in obj['attachments']:
                 if attachment['type'] == 'audio_message':
                     if attachment['audio_message']['duration'] > 3:
-                        self.attachments.append(self.work(attachment['audio_message']['link_mp3']))
+                        self.attachments.append(self.work(attachment['audio_message']))
 
     def work(self, link):
-        r = requests.get(link)
+        r = requests.get(link['link_mp3'])
         with open('audio.mp3', 'wb') as output_file:
             output_file.write(r.content)
-        upload = self.core.upload.audio('audio.mp3', "artist", "title")
-        print('uploaded: ', upload)
+        title = "title"
+        if len(link['transcript']):
+            if len(link['transcript']) > 200:
+                title = link['transcript'][:200]
+            else:
+                title = link['transcript']
+        user = self.core.vk_session.method('users.get',{'user_id' : link['owner_id']})[0]
+        upload = self.core.uupload.audio('audio.mp3', user['first_name'] + ' ' + user['last_name'], title)
         #self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='audio' + str(upload['owner_id']) + '_' + str(upload['id']))
         return('audio' + str(upload['owner_id']) + '_' + str(upload['id']))
         
@@ -843,7 +848,7 @@ class jirniy:
     def actions(self):
         #return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
         #return [self.dapizda, self.privet, self.nebuhtet, self.poh, self.vinishko]
-        return [self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
+        return [self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko, self.russ, self.salam, self.kotlet]
     def stats(self):
         return {}
 
@@ -953,6 +958,24 @@ class jirniy:
                 upload = self.core.upload.photo_messages('vinishko.jpg')[0]
                 self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
+    def russ(self, event):
+        if self.is_chat(event):
+            if event.message.text.lower().find('русск') != -1:
+                upload = self.core.upload.photo_messages('russ' + str(random.randint(1, 11)) + '.jpg')[0]
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def salam(self, event):
+        if self.is_chat(event):
+            if event.message.text.lower().find('салам') != -1:
+                upload = self.core.upload.photo_messages('salam.jpg')[0]
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
+    def kotlet(self, event):
+        if self.is_chat(event):
+            if event.message.text.lower().find('котлет') != -1:
+                upload = self.core.upload.photo_messages('kotlet.jpg')[0]
+                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+
     def help(self):
         return ['Бот реагирует картинкой или роликом на некоторые определённые фразы']
       
@@ -1013,7 +1036,7 @@ class quotes:
     def __init__(self, core, gparms):
         self.core = core
         self.gparms = gparms
-        self.f = open('quotes.txt', 'r')
+        self.f = open('quotes.txt', 'r', encoding="utf8")
         self.quotes = self.f.readlines()
         self.times = []
         self.trigtime = 0
@@ -1277,25 +1300,24 @@ class sorbetoban:
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
                 if self.word_check(event.message.text):
-                    if event.message.from_id != 379124050:
-                        uname = str(event.message.from_id)
-                        self.gparms['is_ach_on_user']('first_ban',uname)
-                        self.gparms['is_ach_on_user']('5_bans',uname)
-                        self.gparms['achievements'][uname]['first_ban']['count'] += 1
-                        if self.gparms['achievements'][uname]['first_ban']['count'] == 1:
-                            self.gparms['achieve']('first_ban',uname)
-                        elif self.gparms['achievements'][uname]['first_ban']['count'] == 5:
-                            self.gparms['achieve']('5_bans',uname)
-                        self.gparms['is_stat_on_user']('sorbetoban',uname)
-                        self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
-                        print(self.gparms['chat_admins'])
-                        if event.message.from_id in self.gparms['chat_admins']:
-                            self.name = self.core.vk_session.method('users.get',{'user_id' : event.message.from_id})[0]['first_name']
-                            self.core.send_message('@id' + str(event.message.from_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=event.chat_id,forward_messages=None)
-                        if event.message.from_id == 373593096:
-                            self.core.send_message('Андрюша, и тебе Тимошу!',chat_id=event.chat_id,forward_messages=None)
-                        else:
-                            self.core.send_message('И тебе сорбет!',chat_id=event.chat_id,forward_messages=None)
+                    '''uname = str(event.message.from_id)
+                    self.gparms['is_ach_on_user']('first_ban',uname)
+                    self.gparms['is_ach_on_user']('5_bans',uname)
+                    self.gparms['achievements'][uname]['first_ban']['count'] += 1
+                    if self.gparms['achievements'][uname]['first_ban']['count'] == 1:
+                        self.gparms['achieve']('first_ban',uname)
+                    elif self.gparms['achievements'][uname]['first_ban']['count'] == 5:
+                        self.gparms['achieve']('5_bans',uname)
+                    self.gparms['is_stat_on_user']('sorbetoban',uname)
+                    self.gparms['stats'][uname]['sorbetoban']['value'] = self.gparms['achievements'][uname]['first_ban']['count']
+                    print(self.gparms['chat_admins'])'''
+                    if event.message.from_id in self.gparms['chat_admins']:
+                        self.name = self.core.vk_session.method('users.get',{'user_id' : event.message.from_id})[0]['first_name']
+                        self.core.send_message('@id' + str(event.message.from_id) + '(' + self.name + ') помнит о том, кто нас объединил!',chat_id=event.chat_id,forward_messages=None)
+                    if event.message.from_id == 373593096:
+                        self.core.send_message('Андрюша, и тебе Тимошу!',chat_id=event.chat_id,forward_messages=None)
+                    else:
+                        self.core.send_message('И тебе сорбет!',chat_id=event.chat_id,forward_messages=None)
 
     def word_prepare(self):
         self.word_letters = []

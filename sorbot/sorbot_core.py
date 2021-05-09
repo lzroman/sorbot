@@ -16,20 +16,23 @@ import math
 
 
 class sorbot_core:
-    def __init__(self, token):
+    def __init__(self, token, utoken = ''):
         self._app_id = "2685278"
         self._vk_client_secret = "hHbJug59sKJie78wjrH8"
-        #self.vk_session = vk_api.VkApi(token=token, app_id=self._app_id, client_secret=self._vk_client_secret)
-        #self.vk_session_a = vk_api.VkApi('380988588015', 'fishglory')
+        if len(utoken):
+            self.uvk_session = vk_api.VkApi(token=utoken, app_id=self._app_id, client_secret=self._vk_client_secret)
+            # self.uvk_session_a.auth()
+            self.uupload = vk_api.VkUpload(self.uvk_session)
+            # self.audio = audio.VkAudio(self.uvk_session_a)
+            self.uacc = True
+        else:
+            self.uacc = False
         self.vk_session = vk_api.VkApi(token=token)
         self.vk = self.vk_session.get_api()
         self.upload = vk_api.VkUpload(self.vk_session)
-        ''' self.vk_session_a.auth()
-        self.vk = self.vk_session.get_api()
+        '''self.vk = self.vk_session.get_api()
         self.longpoll = VkLongPoll(self.vk_session)
-        self.tools = vk_api.VkTools(self.vk_session)
-        self.upload = vk_api.VkUpload(self.vk_session)
-        self.audio = audio.VkAudio(self.vk_session_a)'''
+        self.tools = vk_api.VkTools(self.vk_session)'''
         self.longpoll = VkBotLongPoll(self.vk_session, group_id = 200577613)
 
 
