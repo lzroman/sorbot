@@ -720,13 +720,14 @@ class texttospeech:
         return ans
 
     def work(self, text, user):
-        gTTS(text, lang='ru').save('speech.mp3')
+        fname = 'speech' + str(random.randint(0, 100)) + '.mp3'
+        gTTS(text, lang='ru').save(fname)
         title = "title"
         if len(text) > 200:
             title = text[:200]
         else:
             title = text
-        upload = self.core.uupload.audio('speech.mp3', user['first_name'] + ' ' + user['last_name'], title)
+        upload = self.core.uupload.audio(fname, user['first_name'] + ' ' + user['last_name'], title)
         return('audio' + str(upload['owner_id']) + '_' + str(upload['id']))
         
     def stats(self):
