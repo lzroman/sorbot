@@ -16,6 +16,7 @@ import math
 from PIL import Image
 import json
 from pathlib import Path
+from gtts import gTTS
 
 #import discord
 
@@ -490,7 +491,7 @@ class daily_pidor:
                         if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
                             self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
                             self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
-                    if self.itime.day != ctime.day:
+                    if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time']).day != ctime.day:
                         if ctime.hour > 19:
                             self.init(event.chat_id)
                     
@@ -663,6 +664,74 @@ class voicetomusic:
         return {}
 
 
+class texttospeech:
+    def __init__(self, core, gparms):
+        self.core = core
+        self.gparms = gparms
+        self.attachments = []
+        self.busy = False
+
+    def achievements(self):
+        return {}
+
+    def actions(self):
+        return [self.action]
+
+    def help(self):
+        return ['Команда "карбот озвучь" и прикреплённое сообщение с текстом озвучит его и отправит как аудиозапись']
+    
+    def action(self, event):
+        if self.core.uacc:
+            if event.type == VkBotEventType.MESSAGE_NEW:
+                if event.from_chat:
+                    if event.message.text.lower() == "карбот озвучь":
+                        if 'reply_message' in event.raw['object']['message'].keys():
+                            text = self.parsereply(event.raw['object']['message']['reply_message'])
+                            if text:
+                                user = self.core.vk_session.method('users.get',{'user_id' : event.raw['object']['message']['from_id']})[0]
+                                att = self.work(text, user)
+                                self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment=att)
+                        elif len(event.raw['object']['message']['fwd_messages']):
+                            text = self.parsefwd(event.raw['object']['message']['fwd_messages'])
+                            user = self.core.vk_session.method('users.get',{'user_id' : event.raw['object']['message']['from_id']})[0]
+                            att = self.work(text, user)
+                            self.core.vk.messages.send(message='Наслаждайтесь!', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment=att)
+
+    def parsereply(self, obj):
+        return self.parse_in(obj)
+
+    def parsefwd(self, obj):
+        ans = ''
+        if len(obj):
+            for subobj in obj:
+                ans += self.parse_in(subobj) + '\n'
+        return ans
+
+    def parse_in(self, obj):
+        ans = ''
+        if 'reply_message' in obj.keys():
+            ans += self.parse_in(obj['reply_message']) + '\n'
+        if 'fwd_messages' in obj.keys():
+            for subobj in obj['fwd_messages']:
+                ans += self.parse_in(subobj) + '\n'
+        if 'text' in obj.keys():
+            if len(obj['text']) > 0:
+                ans += obj['text'] + '\n'
+        return ans
+
+    def work(self, text, user):
+        gTTS(text, lang='ru').save('speech.mp3')
+        title = "title"
+        if len(text) > 200:
+            title = text[:200]
+        else:
+            title = text
+        upload = self.core.uupload.audio('speech.mp3', user['first_name'] + ' ' + user['last_name'], title)
+        return('audio' + str(upload['owner_id']) + '_' + str(upload['id']))
+        
+    def stats(self):
+        return {}
+
 
 
 
@@ -775,14 +844,6 @@ class bassboost:
                                 self.acting = False
     def stats(self):
         return {}
-
-
-
-
-
-
-
-
 
 
 class achievements_list:
