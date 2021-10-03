@@ -228,6 +228,7 @@ class huy:
         self.glas = 'аиоуыэ'
         self.sogl_zv = 'сзж'
         self.sogl = 'бвгдзклмнпрстфхжцшщчй'
+        self.stoplist = ['а', 'и', 'но', 'с', 'в', 'под', 'над', 'из', 'за', 'ещё', 'чё', 'че', 'из-за', 'я']
 
     def achievements(self):
         #return {'first_huy':{'text':'ХуйНя!','desc':'Первая игра в карательную рулетку','params':{'state':False,'count':0}}}
@@ -291,7 +292,9 @@ class huy:
         return ans
 
     def makehui(self, msg):
-        if len(msg):
+        if len(msg) < 3:
+            return None
+        if msg not in self.stoplist:
             text = ''
             words = msg.lower().split()
             for word in words:
@@ -944,7 +947,7 @@ class jirniy:
             },
             {
                 'text': ['болот'],
-                'img': ['okurok.jpg'],
+                'img': ['boloto.jpg'],
                 'time': 0
             },
             {
@@ -1427,7 +1430,7 @@ class sorbetoban:
             return False
 
     def help(self):
-        return ['Бан за упоминание сорбета']
+        return ['Выдача благодарности за упоминание сорбета']
 
 '''    
     
