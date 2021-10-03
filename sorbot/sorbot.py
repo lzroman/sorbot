@@ -292,9 +292,7 @@ class huy:
         return ans
 
     def makehui(self, msg):
-        if len(msg) < 3:
-            return None
-        if msg not in self.stoplist:
+        if len(msg):
             text = ''
             words = msg.lower().split()
             for word in words:
@@ -302,6 +300,10 @@ class huy:
             return text
 
     def makehuy(self, word):
+        if len(word) < 4:
+            return word
+        if word in self.stoplist:
+            word
         text = ''
         if word[0] in self.glas_y:
             text = 'ху' + word
