@@ -924,7 +924,7 @@ class jirniy:
             },
             {
                 'text': ['всем пока'],
-                'img': ['okurok.jpg'],
+                'img': ['poka.jpg'],
                 'time': 0
             },
             {
