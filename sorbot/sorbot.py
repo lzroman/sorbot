@@ -67,9 +67,6 @@ class sorbot:
                 with open('plugins.json', 'w') as outfile:
                     json.dump(self.gparms['plugins'], outfile)
                 break
-            if inp == 'f':
-                upload = self.core.upload.photo_messages('bye.jpg')[0]
-                self.core.vk.messages.send(message='Прощайте.', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
 
     def saving_ach(self):
@@ -417,7 +414,6 @@ class daily_pidor:
     def __init__(self, core, gparms):
         self.core = core
         self.gparms = gparms
-        self.pidor = 0
         self.itime = datetime.datetime.now()
         if 'pidor' not in self.gparms['plugins']:
             self.gparms['plugins']['pidor'] = {}
@@ -487,27 +483,28 @@ class daily_pidor:
         print('done')
 
     def action(self, event):
-        time = datetime.datetime.now()
-        if event.type == VkBotEventType.MESSAGE_NEW:
-            if event.from_chat:
-                if event.chat_id in self.gparms['plugins']['pidor']:
-                    ctime = datetime.datetime.now()
-                    if event.message.from_id == self.gparms['plugins']['pidor'][event.chat_id]['id']:
-                        if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
-                            self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
-                            self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
-                    if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time']).day != ctime.day:
-                        if ctime.hour > 19:
+        if self.gparms['plugins']['pidor'][event.chat_id]['id']:
+            if event.type == VkBotEventType.MESSAGE_NEW:
+                if event.from_chat:
+                    if event.chat_id in self.gparms['plugins']['pidor']:
+                        ctime = datetime.datetime.now()
+                        if event.message.from_id == self.gparms['plugins']['pidor'][event.chat_id]['id']:
+                            if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
+                                self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
+                                self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
+                        if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time']).day != ctime.day:
+                            if ctime.hour > 7:
+                                self.init(event.chat_id)
+                        
+                        words = event.message.text.lower().split()
+                        if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'выключи':
+                            self.core.send_message('Функция Пидор дня отключена.',chat_id=event.chat_id,forward_messages=None)
+                            self.gparms['plugins']['pidor'][event.chat_id]['id'] = 0
+                    else:
+                        words = event.message.text.lower().split()
+                        if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'включи':
+                            self.core.send_message('Функция Пидор дня включена.',chat_id=event.chat_id,forward_messages=None)
                             self.init(event.chat_id)
-                    
-                    words = event.message.text.lower().split()
-                    if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'выключи':
-                        self.core.send_message('Функция Пидор дня отключена.',chat_id=event.chat_id,forward_messages=None)
-                else:
-                    words = event.message.text.lower().split()
-                    if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'включи':
-                        self.core.send_message('Функция Пидор дня включена.',chat_id=event.chat_id,forward_messages=None)
-                        self.init(event.chat_id)
 
 
     def whois(self, event):
@@ -561,7 +558,7 @@ class daily_pidor:
             self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
             self.gparms['plugins']['pidor'][chat_id]['id'] = uid
             self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.gparms['plugins']['pidor'][chat_id]['id']})[0]['first_name']
-            print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(self.pidor))
+            print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(self.gparms['plugins']['pidor'][chat_id]['id']))
             if not silent:
                 self.core.send_message('@id' + str(self.gparms['plugins']['pidor'][chat_id]['name']) + '(' + self.gparms['plugins']['pidor'][chat_id]['name'] + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=chat_id)
                 
