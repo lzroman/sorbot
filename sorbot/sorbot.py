@@ -487,6 +487,7 @@ class daily_pidor:
         if self.gparms['plugins']['pidor'][event.chat_id]['id']:
             if event.type == VkBotEventType.MESSAGE_NEW:
                 if event.from_chat:
+                    words = event.message.text.lower().split()
                     if event.chat_id in self.gparms['plugins']['pidor']:
                         ctime = datetime.datetime.now()
                         if event.message.from_id == self.gparms['plugins']['pidor'][event.chat_id]['id']:
@@ -497,7 +498,6 @@ class daily_pidor:
                             if ctime.hour > 7:
                                 self.init(event.chat_id)
                         
-                        words = event.message.text.lower().split()
                         if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'выключи':
                             self.core.send_message('Функция Пидор дня отключена.',chat_id=event.chat_id,forward_messages=None)
                             self.gparms['plugins']['pidor'][event.chat_id]['id'] = 0
