@@ -493,6 +493,8 @@ class daily_pidor:
                         if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
                             self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
                             self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
+                    if 'init' not in self.gparms['plugins']['pidor'][event.chat_id].keys():
+                        self.gparms['plugins']['pidor'][event.chat_id]['init'] = self.gparms['plugins']['pidor'][event.chat_id]['time']
                     if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['init']).day != ctime.day:
                         if ctime.hour > 7:
                             self.init(event.chat_id)
