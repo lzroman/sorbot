@@ -453,7 +453,7 @@ class daily_pidor:
             'dungeon master',
             'гомосексуалист',
             'Чарли из шоколадной фабики',
-            'Boss of this gym'
+            'Boss of this gym','адская сука', 'анал', 'ауешник', 'баклан', 'баланда', 'балбес', 'балда', 'баран', 'бармак', 'башмак', 'безмозглый', 'безхребетный', 'бес', 'бестолочь', 'бионусор', 'бич', 'блевотина', 'блядина', 'блядище', 'блядун', 'блядь', 'блядье', 'болван', 'больной', 'бомж', 'бомжара', 'бревно', 'быдлан', 'быдларь', 'быдлище', 'быдло', 'бычье', 'валенок', 'вард', 'вард', 'вошь', 'выблядок', 'выблядь', 'выебень', 'выродец', 'выхухоль', 'гандон', 'гандонище', 'гей', 'глиномес', 'глупец', 'гнида', 'гниль', 'гнилье', 'гной', 'гнойник', 'говна кусок', 'говнарь', 'говно', 'говмовоз', 'говмоед', 'голубой', 'гомосек', 'горилла', 'грязь', 'дармоед', 'даун', 'даунист', 'дебил', 'дебилоид', 'девственник', 'дегенерат', 'деградант', 'деревенщина', 'дерево', 'дерьмище', 'дерьчо', 'дерьмоед', 'дешовка', 'диплодок', 'днарь', 'днина', 'днище', 'дно', 'додик', 'долбан', 'долбоёб перманентный,\nдолбоёб', 'долбоёбина', 'долбоёбище', 'долбозавр', 'долбоящер', 'долбхлоп', 'донный', 'дрочево', 'дуб', 'дубак', 'дубина', 'дубиноголвый', 'дубище', 'дубло', 'дуболом', 'дуботряс', 'дундук', 'дупло', 'дурак', 'дуралей', 'дурачёк', 'дурачина', 'дурачьё', 'дурень', 'ебанат натрия', 'ебанат', 'ебанина', 'ебанутый', 'ебень', 'еблан', 'ебланище', 'еблище', 'ебло', 'ёбнутый', 'ебун', 'единица', 'елда', 'елданосец', 'ель', 'ересь', 'еретик', 'жёлтый билет', 'животное', 'жид', 'жирдяй', 'жлоб', 'жлобье', 'жмот', 'жучьё', 'заднеприводный', 'заёбщина', 'залупа', 'залупарь', 'залупенец', 'залупище', 'запупье', 'игуанадон', 'идиот', 'идиотина', 'идистище', 'имбицил', 'индюк', 'истукан', 'калдаёбина', 'клешнерукий', 'клешня', 'клоп', 'клоун', 'козёл', 'козлина', 'кретин', 'крип', 'крыса', 'куколд', 'курва', 'куртизанка', 'кустарник', 'либераст', 'либераха', 'попух', 'лосось', 'пох', 'лохня', 'лоховина', 'лошара', 'лошня', 'люмпен', 'маргинал', 'межзалупье', 'мелочь', 'мель', 'мудак', 'мудачье', 'мудень', 'мудилище', 'мудило гороховое', 'мудило', 'мудильник', 'мудлан', 'мудло', 'мудовзон', 'мудоебище', 'мурло', 'мусор', 'мусорник', 'муфлон', 'мясо', 'недалёкий', 'недоёбок', 'недостаток', 'недоумок', 'неудачник', 'неумеха', 'нигер', 'обезьяна', 'обкурыш', 'обмудок', 'оболдуй', 'оболтус', 'обрезка колбасная', 'обрубок', 'обрыган', 'овощ', 'сеца', 'огрызок', 'огузок', 'окурок', 'олень', 'олух', 'опущенный', 'орангутанг', 'осёл', 'остолоп', 'отморовок', 'оторва', 'отребье', 'отрод родье', 'оффник', 'очко', 'очкун', 'падаль', 'падальщик', 'падла', 'падшая женщина', 'палево', 'паразит', 'паскуда', 'паштет', 'педераст', 'пентюх', 'пень', 'пердун', 'петух', 'прок', 'петушара', 'пидор', 'пидорас', 'пидорасина', 'пидорасище', 'пидорасня', 'пидорат калия', 'пидорок', 'пидрила', 'пидрилище', 'пидрильник', 'пидрокоптер', 'пизда', 'пиздень', 'пиздище', 'пиздокрыл', 'пиздолиз', 'плевок', 'поблядуха', 'погань', 'подзалупник', 'подлец', 'подонок', 'подсос', 'подстилка', 'позер', 'позорник', 'полоумный', 'полудурок', 'полуёбок', 'полупидор', 'полупокер', 'помой', 'помойник', 'попущенец', 'порок', 'порча', 'посмешище', 'потаскуха', 'предатель', 'придурок', 'пробка', 'просак', 'простак', 'проститутка колорадская', 'проститутка', 'прыш', 'пугало', 'пустоголовный', 'путана', 'рак', 'рахитоид', 'рачина', 'рачьё', 'рвота', 'ротан', 'рубанок', 'рубец', 'рукоблуд', 'рыло', 'самокатер', 'свиния', 'сельдь', 'сифилис', 'сифиозник', 'скалапендра', 'сосло', 'сосун', 'спермаглот', 'спидоаник', 'сука', 'сучара', 'сучёнок', 'сучёныш', 'сучьё', 'сын сукин', 'табуретка', 'тополь', 'трубочист', 'тряпка', 'тряпло', 'туберкулёзник', 'тупак', 'тупица', 'туполом', 'тухлятина', 'ублюдок', 'увалень', 'удот', 'уебан', 'уебанище', 'үёбище', 'уёбок', 'узколобый', 'упорант', 'упырь', 'утыр утырок', 'фраер', 'фуфло', 'фаллос', 'харчок', 'хач', 'хер', 'херня', 'херь', 'хохол', 'хрен', 'хреновина', 'хренс хренстень', 'хрень', 'хуеблядь', 'хуемразеблядопиздомудоебище', 'хуемразь', 'хуепутало', 'хуесос', 'хуесосина', 'хуесосище', 'хустень', 'хустища', 'хуй', 'хуила', 'хуйлан', 'хуйлище', 'хүйло', 'хуйня', 'чайник', 'ила', 'челядь', 'чепалаха', 'чепухан', 'чепуханец', 'червь', 'черепаха', 'черномазый', 'чёрт', 'чертила', 'членистоногое', 'членосос', 'чмище', 'чмо', 'чмоня', 'чмошник', 'чмырь', 'чмырье', 'чудище', 'чудовище', 'чурбан', 'чурка', 'чухан', 'чуханье', 'шайсе', 'шалава', 'шалашовка', 'шарамыжник', 'швайне', 'шваль', 'ль', 'шелупонь', 'шелухань', 'шимпанзе', 'шлюха', 'шляпа', 'шмакодявка', 'шмалево', 'шмаль', 'шмалье,\nшмарамойка', 'шут', 'язва'
             ]
         ]
 
@@ -477,6 +477,7 @@ class daily_pidor:
         self.gparms['plugins']['pidor'][chat_id]['id'] = pidor
         self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : pidor})[0]['first_name']
         self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
+        self.gparms['plugins']['pidor'][chat_id]['init'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
         print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(pidor))
         if not silent:
             self.core.send_message('@id' + str(pidor) + '(' + self.gparms['plugins']['pidor'][chat_id]['name'] + '), теперь вы - пидор дня. Наслаждайтесь вашим статусом!',chat_id=chat_id)
@@ -492,7 +493,7 @@ class daily_pidor:
                             if (ctime - datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time'])).total_seconds() > 30 * 60:
                                 self.gparms['plugins']['pidor'][event.chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now())
                                 self.core.send_message(random.choice(self.words[0]) + ' ' + random.choice(self.words[1]) + ' @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
-                        if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['time']).day != ctime.day:
+                        if datetime.datetime.fromtimestamp(self.gparms['plugins']['pidor'][event.chat_id]['init']).day != ctime.day:
                             if ctime.hour > 7:
                                 self.init(event.chat_id)
                         
@@ -511,42 +512,43 @@ class daily_pidor:
         if event.type == VkBotEventType.MESSAGE_NEW:
             if event.from_chat:
                 if event.chat_id in self.gparms['plugins']['pidor'].keys():
-                    if event.message.text.lower() == 'карбот пидор' or event.message.text.lower() == 'карбот герой':
-                        self.gparms['plugins']['pidor'][event.chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.gparms['plugins']['pidor'][event.chat_id]['id']})[0]['first_name']
-                        self.core.send_message('Сегодняшний пидор - @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
-                    #if event.message.from_id in self.gparms['chat_admins']:
-                    words = event.message.text.lower().split()
-                    if words[0] == 'карбот' and words[1] == 'сменщик':
-                        admin_list = []
-                        ans = self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : event.chat_id + 2000000000})
-                        for user in ans['items']:
-                            if 'is_admin' in user:
-                                if user['is_admin']:
-                                    admin_list.append(user['member_id'])
-                        if event.message.from_id in admin_list:
-                            if len(words) == 2:
-                                self.init(event.chat_id)
-                            elif words[2] == 'тихо':
-                                self.init(event.chat_id, silent=True)
-                            else:
-                                print(words)
-                                if words[2][0] == '[':
-                                    npos = words[2].find('|')
-                                    print(npos)
-                                    if npos != -1:
-                                        try:
-                                            ans = self.core.vk_session.method('utils.resolveScreenName', {'screen_name' : words[2][1:npos]})
-                                        except Exception as e:
-                                            print(''.join(['fail: ', e]))
-                                        print(ans)
-                                        if len(ans):
-                                            if ans['type'] == 'user':
-                                                uid = self.core.vk_session.method('users.get',{'user_id' : [int(words[2][3:npos])]})[0]['id']
-                                                print(uid)
-                                                if words[-1] == 'тихо':
-                                                    self.forceinit(event.chat_id, uid, silent=True)
-                                                else:
-                                                    self.forceinit(event.chat_id, uid)
+                    if self.gparms['plugins']['pidor'][event.chat_id]:
+                        if event.message.text.lower() == 'карбот пидор' or event.message.text.lower() == 'карбот герой':
+                            self.gparms['plugins']['pidor'][event.chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.gparms['plugins']['pidor'][event.chat_id]['id']})[0]['first_name']
+                            self.core.send_message('Сегодняшний пидор - @id' + str(self.gparms['plugins']['pidor'][event.chat_id]['id']) + '(' + self.gparms['plugins']['pidor'][event.chat_id]['name'] + ').',chat_id=event.chat_id,forward_messages=None)
+                        #if event.message.from_id in self.gparms['chat_admins']:
+                        words = event.message.text.lower().split()
+                        if words[0] == 'карбот' and words[1] == 'сменщик':
+                            admin_list = []
+                            ans = self.core.vk_session.method('messages.getConversationMembers',{'peer_id' : event.chat_id + 2000000000})
+                            for user in ans['items']:
+                                if 'is_admin' in user:
+                                    if user['is_admin']:
+                                        admin_list.append(user['member_id'])
+                            if event.message.from_id in admin_list:
+                                if len(words) == 2:
+                                    self.init(event.chat_id)
+                                elif words[2] == 'тихо':
+                                    self.init(event.chat_id, silent=True)
+                                else:
+                                    print(words)
+                                    if words[2][0] == '[':
+                                        npos = words[2].find('|')
+                                        print(npos)
+                                        if npos != -1:
+                                            try:
+                                                ans = self.core.vk_session.method('utils.resolveScreenName', {'screen_name' : words[2][1:npos]})
+                                            except Exception as e:
+                                                print(''.join(['fail: ', e]))
+                                            print(ans)
+                                            if len(ans):
+                                                if ans['type'] == 'user':
+                                                    uid = self.core.vk_session.method('users.get',{'user_id' : [int(words[2][3:npos])]})[0]['id']
+                                                    print(uid)
+                                                    if words[-1] == 'тихо':
+                                                        self.forceinit(event.chat_id, uid, silent=True)
+                                                    else:
+                                                        self.forceinit(event.chat_id, uid)
 
 
 
@@ -556,6 +558,7 @@ class daily_pidor:
         if uid in uids:
             self.itime = datetime.datetime.now()
             self.gparms['plugins']['pidor'][chat_id]['time'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
+            self.gparms['plugins']['pidor'][chat_id]['init'] = datetime.datetime.timestamp(datetime.datetime.now() - datetime.timedelta(minutes=31))
             self.gparms['plugins']['pidor'][chat_id]['id'] = uid
             self.gparms['plugins']['pidor'][chat_id]['name'] = self.core.vk_session.method('users.get',{'user_id' : self.gparms['plugins']['pidor'][chat_id]['id']})[0]['first_name']
             print('pidor is ', self.gparms['plugins']['pidor'][chat_id]['name'], ' ', str(self.gparms['plugins']['pidor'][chat_id]['id']))
