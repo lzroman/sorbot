@@ -500,10 +500,9 @@ class daily_pidor:
                     if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'выключи':
                         self.core.send_message('Функция Пидор дня отключена.',chat_id=event.chat_id,forward_messages=None)
                         self.gparms['plugins']['pidor'][event.chat_id]['id'] = 0
-                else:
-                    if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'включи':
-                        self.core.send_message('Функция Пидор дня включена.',chat_id=event.chat_id,forward_messages=None)
-                        self.init(event.chat_id)
+                if words[0] == 'карбот' and words[1] == 'пидор' and words[2] == 'включи':
+                    self.core.send_message('Функция Пидор дня включена.',chat_id=event.chat_id,forward_messages=None)
+                    self.init(event.chat_id)
 
 
     def whois(self, event):
