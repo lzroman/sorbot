@@ -1018,26 +1018,26 @@ class jirniy:
 
     def dapizda(self, event):
         if self.is_chat(event):
-            if self.is_active(self, event):
+            if self.is_active(event):
                 if event.message.text.lower() == "да":
                     upload = self.core.upload.photo_messages(str(Path('imgs/da' + str(random.randint(1, 20)) + '.jpg')))[0]
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                                           
     def korona(self, event):
         if self.is_chat(event):
-            if self.is_active(self, event):
+            if self.is_active(event):
                 if event.message.text.lower().find('коронавирус') != -1:
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239018')
 
     def zabiv(self, event):
         if self.is_chat(event):
-            if self.is_active(self, event):
+            if self.is_active(event):
                 if event.message.text.lower().find('забив') != -1:
                     self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239019')
 
     def nebuhtet(self, event):
         if self.is_chat(event):
-            if self.is_active(self, event):
+            if self.is_active(event):
                 words = event.message.text.lower().split()
                 if len(words) > 3:
                     if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
@@ -1045,7 +1045,7 @@ class jirniy:
                         self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
     def onfind(self, event):
-        if self.is_active(self, event):
+        if self.is_active(event):
             msgtext = event.message.text.lower()
             for el in self.finding:
                 curtime = int(time.time())
