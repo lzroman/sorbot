@@ -908,9 +908,9 @@ class achievements_list:
 class jirniy:
     def __init__(self, core, gparms):
         self.core = core
+        self.gparms = gparms
         if 'jirniy' not in self.gparms['plugins']:
             self.gparms['plugins']['jirniy'] = {}
-        self.gparms = gparms
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
         self.finding = [
             {
@@ -978,7 +978,7 @@ class jirniy:
     def actions(self):
         #return [self.jirniy, self.durka, self.okurok, self.dapizda, self.privet, self.pidocat, self.korona, self.zabiv, self.nebuhtet, self.poh, self.piter, self.boloto, self.vinishko]
         #return [self.dapizda, self.privet, self.nebuhtet, self.poh, self.vinishko]
-        return [self.dapizda, self.korona, self.zabiv, self.nebuhtet, self.onfind]
+        return [self.dapizda, self.korona, self.zabiv, self.nebuhtet, self.onfind, self.config]
     def stats(self):
         return {}
 
@@ -1062,8 +1062,11 @@ class jirniy:
             self.gparms['plugins']['jirniy'][event.chat_id] = False
         if event.message.text.lower() == 'карбот картинки включи':
             self.gparms['plugins']['jirniy'][event.chat_id] = True
+            self.core.send_message('Картинки включены!',chat_id=event.chat_id,forward_messages=None)
+
         if event.message.text.lower() == 'карбот картинки выключи':
             self.gparms['plugins']['jirniy'][event.chat_id] = False
+            self.core.send_message('Картинки выключены!',chat_id=event.chat_id,forward_messages=None)
             
 
     def is_active(self, event):
@@ -1074,7 +1077,7 @@ class jirniy:
 
 
     def help(self):
-        return ['Бот реагирует картинкой или роликом на некоторые определённые фразы']
+        return ['Бот реагирует картинкой или роликом на некоторые определённые фразы. Функция включается командой "карбот картинки включи", выключается "карбот картинки выключи".']
       
 
 class pomyanem:
