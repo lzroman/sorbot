@@ -908,6 +908,8 @@ class achievements_list:
 class jirniy:
     def __init__(self, core, gparms):
         self.core = core
+        if 'jirniy' not in self.gparms['plugins']:
+            self.gparms['plugins']['jirniy'] = {}
         self.gparms = gparms
         self.time = {'jir':0,'durka':0,'okurok':0,'dapizda':0,'pidocat':0}
         self.finding = [
@@ -1016,39 +1018,58 @@ class jirniy:
 
     def dapizda(self, event):
         if self.is_chat(event):
-            if event.message.text.lower() == "да":
-                upload = self.core.upload.photo_messages(str(Path('imgs/da' + str(random.randint(1, 20)) + '.jpg')))[0]
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+            if self.is_active(self, event):
+                if event.message.text.lower() == "да":
+                    upload = self.core.upload.photo_messages(str(Path('imgs/da' + str(random.randint(1, 20)) + '.jpg')))[0]
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
                                           
     def korona(self, event):
         if self.is_chat(event):
-            if event.message.text.lower().find('коронавирус') != -1:
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239018')
+            if self.is_active(self, event):
+                if event.message.text.lower().find('коронавирус') != -1:
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239018')
 
     def zabiv(self, event):
         if self.is_chat(event):
-            if event.message.text.lower().find('забив') != -1:
-                self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239019')
+            if self.is_active(self, event):
+                if event.message.text.lower().find('забив') != -1:
+                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='video379124050_456239019')
 
     def nebuhtet(self, event):
         if self.is_chat(event):
-            words = event.message.text.lower().split()
-            if len(words) > 3:
-                if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
-                    upload = self.core.upload.photo_messages(str(Path('imgs/nebuhtet.jpg')))[0]
-                    self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+            if self.is_active(self, event):
+                words = event.message.text.lower().split()
+                if len(words) > 3:
+                    if words[0] == 'ну' and words[2] == 'и' and words[1] == words[3]:
+                        upload = self.core.upload.photo_messages(str(Path('imgs/nebuhtet.jpg')))[0]
+                        self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
 
     def onfind(self, event):
-        msgtext = event.message.text.lower()
-        for el in self.finding:
-            curtime = int(time.time())
-            if el['time'] + 60 * 1 < curtime:
-                for eltext in el['text']:
-                    if msgtext.find(eltext) != -1:
-                        upload = self.core.upload.photo_messages(str(Path('imgs/' + random.choice(el['img']))))[0]
-                        self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
-                        el['time'] =  curtime
-                        break
+        if self.is_active(self, event):
+            msgtext = event.message.text.lower()
+            for el in self.finding:
+                curtime = int(time.time())
+                if el['time'] + 60 * 1 < curtime:
+                    for eltext in el['text']:
+                        if msgtext.find(eltext) != -1:
+                            upload = self.core.upload.photo_messages(str(Path('imgs/' + random.choice(el['img']))))[0]
+                            self.core.vk.messages.send(message='', random_id=vk_api.utils.get_random_id(),chat_id=event.chat_id,forward_messages=None,attachment='photo' + str(upload['owner_id']) + '_' + str(upload['id']))
+                            el['time'] =  curtime
+                            break
+
+    def config(self, event):
+        if event.chat_id not in self.gparms['plugins']['jirniy']:
+            self.gparms['plugins']['jirniy'][event.chat_id] = False
+        if event.message.text.lower() == 'карбот картинки включи':
+            self.gparms['plugins']['jirniy'][event.chat_id] = True
+        if event.message.text.lower() == 'карбот картинки выключи':
+            self.gparms['plugins']['jirniy'][event.chat_id] = False
+            
+
+    def is_active(self, event):
+        if event.chat_id not in self.gparms['plugins']['jirniy']:
+            self.gparms['plugins']['jirniy'][event.chat_id] = False
+        return self.gparms['plugins']['jirniy'][event.chat_id]
 
 
 
